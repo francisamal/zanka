@@ -130,13 +130,72 @@ const tops = [
   },
 ]
 
-type Tab = 'socks' | 'tops'
+interface DBProduct {
+  id: string
+  slug: string
+  name: string
+  description: string
+  price_inr: number
+  price_usd: number
+  image_url: string
+  tag: string
+  category_id: string
+}
+
+interface DBCategory {
+  id: string
+  name: string
+  slug: string
+}
 
 export default function Shop() {
-  const [activeTab, setActiveTab] = useState<Tab>('socks')
+  const [categories, setCategories] = useState<DBCategory[]>([
+    { id: 'socks-fallback', name: 'Pop Culture Socks', slug: 'socks' },
+    { id: 'tops-fallback', name: 'Statement Tops', slug: 'tops' }
+  ])
+  const [products, setProducts] = useState<any[]>([])
+  const [activeTab, setActiveTab] = useState<string>('socks')
   const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
   const sectionRef = useRef<HTMLElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await fetch('/api/products')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.categories && data.categories.length > 0) {
+            setCategories(data.categories)
+            if (data.categories.some((c: DBCategory) => c.slug === 'socks')) {
+              setActiveTab('socks')
+            } else {
+              setActiveTab(data.categories[0].slug)
+            }
+          }
+          if (data.products && data.products.length > 0) {
+            const mapped = data.products.map((p: DBProduct) => ({
+              id: p.id,
+              name: p.name,
+              tag: p.tag,
+              price: `₹${p.price_inr}`,
+              usd: `$${p.price_usd}`,
+              image: p.image_url,
+              desc: p.description || '',
+              categorySlug: data.categories.find((c: DBCategory) => c.id === p.category_id)?.slug || ''
+            }))
+            setProducts(mapped)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic shop products:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -158,9 +217,22 @@ export default function Shop() {
       { opacity: 0, y: 40 },
       { opacity: 1, y: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out' }
     )
-  }, [activeTab])
+  }, [activeTab, products])
 
-  const products = activeTab === 'socks' ? socks : tops
+  // Get categories emoji/icons mapping helper
+  const getCategoryIcon = (slug: string) => {
+    if (slug === 'socks') return '🧦 '
+    if (slug === 'tops') return '👚 '
+    return '🛍️ '
+  }
+
+  // Fallback filtering or dynamic filtering
+  let displayedProducts = []
+  if (products.length > 0) {
+    displayedProducts = products.filter(p => p.categorySlug === activeTab)
+  } else {
+    displayedProducts = activeTab === 'socks' ? socks : (activeTab === 'tops' ? tops : [])
+  }
 
   return (
     <section ref={sectionRef} className="py-24 px-8 md:px-20 lg:px-32">
@@ -175,25 +247,25 @@ export default function Shop() {
           SHOP NOW
         </h2>
 
-        <div className="mt-8 flex gap-1 p-1 w-fit" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2 }}>
-          {(['socks', 'tops'] as Tab[]).map(tab => (
+        <div className="mt-8 flex flex-wrap gap-1 p-1 w-fit" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2 }}>
+          {categories.map(cat => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={cat.slug}
+              onClick={() => setActiveTab(cat.slug)}
               className="font-body text-xs tracking-[0.25em] uppercase px-6 py-2.5 transition-all duration-300 font-medium"
               style={{
-                background: activeTab === tab ? 'var(--red)' : 'transparent',
-                color: activeTab === tab ? '#fff' : 'rgba(255,255,255,0.4)',
+                background: activeTab === cat.slug ? 'var(--red)' : 'transparent',
+                color: activeTab === cat.slug ? '#fff' : 'rgba(255,255,255,0.4)',
               }}
             >
-              {tab === 'socks' ? '🧦 Pop Culture Socks' : '👚 Statement Tops'}
+              {getCategoryIcon(cat.slug)}{cat.name}
             </button>
           ))}
         </div>
       </div>
 
       <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {products.map((product) => (
+        {displayedProducts.map((product) => (
           <div
             key={product.id}
             className="product-card group relative overflow-hidden"

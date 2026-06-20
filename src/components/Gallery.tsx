@@ -7,18 +7,20 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const BUCKET_URL = 'https://dmctisqflcwhnjwkalgw.supabase.co/storage/v1/object/public/zanka-objects-directory/products'
+
 const allProducts = [
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.02 PM.jpeg', span: 'row-span-2' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.02 PM (1).jpeg', span: '' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.03 PM (1).jpeg', span: '' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.04 PM.jpeg', span: 'row-span-2' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.03 PM (2).jpeg', span: '' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.05 PM.jpeg', span: '' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.05 PM (1).jpeg', span: '' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.06 PM.jpeg', span: '' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.07 PM (1).jpeg', span: 'row-span-2' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.07 PM (2).jpeg', span: '' },
-  { src: '/products/WhatsApp Image 2026-06-20 at 12.24.08 PM (1).jpeg', span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.02%20PM.jpeg`, span: 'row-span-2' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.02%20PM%20(1).jpeg`, span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.03%20PM%20(1).jpeg`, span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.04%20PM.jpeg`, span: 'row-span-2' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.03%20PM%20(2).jpeg`, span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.05%20PM.jpeg`, span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.05%20PM%20(1).jpeg`, span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.06%20PM.jpeg`, span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.07%20PM%20(1).jpeg`, span: 'row-span-2' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.07%20PM%20(2).jpeg`, span: '' },
+  { src: `${BUCKET_URL}/WhatsApp%20Image%202026-06-20%20at%2012.24.08%20PM%20(1).jpeg`, span: '' },
 ]
 
 export default function Gallery() {
