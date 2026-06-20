@@ -17,49 +17,89 @@ export default function Hero() {
     const canvas = canvasRef.current
     if (!canvas) return
 
+
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setSize(window.innerWidth, window.innerHeight)
 
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
-    camera.position.z = 5
+    camera.position.z = 6
+    camera.position.y = 1.5
+    camera.lookAt(0, 0, 0)
 
-    const count = 1800
+    // Columns and rows for a structured dynamic grid mesh
+    const columns = 75
+    const rows = 45
+    const count = columns * rows
     const positions = new Float32Array(count * 3)
     const colors = new Float32Array(count * 3)
-    const velocities: number[] = []
 
-    for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 24
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 24
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10
-      velocities.push((Math.random() - 0.5) * 0.0025, (Math.random() - 0.5) * 0.0025)
-      const isRed = Math.random() > 0.72
-      colors[i * 3] = isRed ? 0.9 : 0.9
-      colors[i * 3 + 1] = isRed ? 0.13 : 0.9
-      colors[i * 3 + 2] = isRed ? 0.17 : 0.9
+    for (let x = 0; x < columns; x++) {
+      for (let y = 0; y < rows; y++) {
+        const i = x * rows + y
+        // Centered grid arrangement
+        positions[i * 3] = (x - columns / 2) * 0.28
+        positions[i * 3 + 1] = (y - rows / 2) * 0.24
+        positions[i * 3 + 2] = 0
+
+        // Soft white/gray particles mixed with brand red accents
+        const isRed = Math.random() > 0.88
+        if (isRed) {
+          colors[i * 3] = 0.90   // Red
+          colors[i * 3 + 1] = 0.13
+          colors[i * 3 + 2] = 0.17
+        } else {
+          colors[i * 3] = 0.45   // Soft Slate/White
+          colors[i * 3 + 1] = 0.45
+          colors[i * 3 + 2] = 0.48
+        }
+      }
     }
 
     const geo = new THREE.BufferGeometry()
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
 
+    // Programmatically generate a high-quality soft circle texture for particles
+    const createCircleTexture = () => {
+      const c = document.createElement('canvas')
+      c.width = 32
+      c.height = 32
+      const ctx = c.getContext('2d')
+      if (ctx) {
+        const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16)
+        grad.addColorStop(0, 'rgba(255, 255, 255, 1)')
+        grad.addColorStop(0.3, 'rgba(255, 255, 255, 0.8)')
+        grad.addColorStop(1, 'rgba(255, 255, 255, 0)')
+        ctx.fillStyle = grad
+        ctx.beginPath()
+        ctx.arc(16, 16, 16, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      return new THREE.CanvasTexture(c)
+    }
+
     const mat = new THREE.PointsMaterial({
-      size: 0.018,
+      size: 0.12,
+      map: createCircleTexture(),
       transparent: true,
       opacity: 0.5,
       vertexColors: true,
       sizeAttenuation: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
     })
 
     const particles = new THREE.Points(geo, mat)
+    // Tilt the whole grid slightly for depth perspective
+    particles.rotation.x = -0.8
     scene.add(particles)
 
     let mouseX = 0, mouseY = 0
     const onMouseMove = (e: MouseEvent) => {
-      mouseX = (e.clientX / window.innerWidth - 0.5) * 0.7
-      mouseY = -(e.clientY / window.innerHeight - 0.5) * 0.7
+      mouseX = (e.clientX / window.innerWidth - 0.5)
+      mouseY = -(e.clientY / window.innerHeight - 0.5)
     }
     window.addEventListener('mousemove', onMouseMove)
 
@@ -81,15 +121,41 @@ export default function Hero() {
       lastTime = now
 
       const pos = geo.attributes.position.array as Float32Array
-      for (let i = 0; i < count; i++) {
-        pos[i * 3] += velocities[i * 2]
-        pos[i * 3 + 1] += velocities[i * 2 + 1]
-        if (Math.abs(pos[i * 3]) > 12) velocities[i * 2] *= -1
-        if (Math.abs(pos[i * 3 + 1]) > 12) velocities[i * 2 + 1] *= -1
+      for (let x = 0; x < columns; x++) {
+        for (let y = 0; y < rows; y++) {
+          const i = x * rows + y
+          
+          // Coordinate-based wave propagation
+          const xAngle = (x * 0.12) + elapsed * 1.6
+          const yAngle = (y * 0.15) + elapsed * 1.3
+          
+          // Smooth mathematical waving
+          let z = Math.sin(xAngle) * 0.45 + Math.cos(yAngle) * 0.35
+
+          // Reactive mouse ripple attraction/repulsion
+          const px = pos[i * 3]
+          const py = pos[i * 3 + 1]
+          
+          // Scale mouse position to screen grid coordinates
+          const targetX = mouseX * 12
+          const targetY = mouseY * 8
+          const dist = Math.sqrt((px - targetX) ** 2 + (py - targetY) ** 2)
+
+          if (dist < 5) {
+            // Apply cursor deformation ripple
+            z += (5 - dist) * 0.35 * Math.sin(elapsed * 5 - dist)
+          }
+
+          pos[i * 3 + 2] = z
+        }
       }
       geo.attributes.position.needsUpdate = true
-      particles.rotation.y = elapsed * 0.022 + mouseX * 0.4
-      particles.rotation.x = elapsed * 0.01 + mouseY * 0.3
+      
+      // Elegant, ambient drift rotation reacting to mouse coords
+      particles.rotation.z = elapsed * 0.015
+      particles.rotation.y = elapsed * 0.01 + mouseX * 0.25
+      particles.rotation.x = -0.8 + mouseY * 0.2
+      
       renderer.render(scene, camera)
     }
     animate()
