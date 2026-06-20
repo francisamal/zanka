@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #080808;
+  --red: #e5212b;
+  --red-dim: rgba(229, 33, 43, 0.15);
+  --white: #ffffff;
+  --off-white: #f0ede8;
+  --gray: #666660;
+  --gray-light: #aaaaaa;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-red: var(--red);
+  --color-off-white: var(--off-white);
+  --color-gray-muted: var(--gray);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  color: var(--off-white);
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: var(--font-body), sans-serif;
+  background: var(--bg);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+.font-display {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: 0.05em;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--white);
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--red);
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 18s linear infinite;
+}
+
+@keyframes scrollLine {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
