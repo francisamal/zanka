@@ -6,7 +6,6 @@ import Marquee from '@/components/Marquee'
 import Shop from '@/components/Shop'
 import About from '@/components/About'
 import Gallery from '@/components/Gallery'
-import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
 
 export default function Home() {
@@ -20,7 +19,6 @@ export default function Home() {
         <Shop />
         <About />
         <Gallery />
-        <Contact />
       </main>
       <Footer />
     </SmoothScroll>

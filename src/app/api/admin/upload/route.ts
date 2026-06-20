@@ -2,7 +2,7 @@ import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { s3Client, BUCKET_NAME } from '@/utils/supabase'
 import { withSupabase } from '@supabase/server'
 
-export const POST = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File | null

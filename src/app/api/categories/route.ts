@@ -1,6 +1,6 @@
 import { withSupabase } from '@supabase/server'
 
-export const GET = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const GET = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const { data, error } = await ctx.supabaseAdmin
       .from('categories')
@@ -14,7 +14,7 @@ export const GET = withSupabase({ auth: 'none' }, async (req, ctx) => {
   }
 })
 
-export const POST = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const { name, slug } = await req.json()
     if (!name || !slug) {
@@ -34,7 +34,7 @@ export const POST = withSupabase({ auth: 'none' }, async (req, ctx) => {
   }
 })
 
-export const DELETE = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const DELETE = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')

@@ -1,6 +1,6 @@
 import { withSupabase } from '@supabase/server'
 
-export const GET = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const GET = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const { data: categories, error: catError } = await ctx.supabaseAdmin
       .from('categories')

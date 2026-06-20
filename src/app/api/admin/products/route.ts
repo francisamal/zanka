@@ -1,6 +1,6 @@
 import { withSupabase } from '@supabase/server'
 
-export const POST = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const body = await req.json()
     const { name, slug, description, price_inr, price_usd, image_url, tag, category_id } = body
@@ -32,7 +32,7 @@ export const POST = withSupabase({ auth: 'none' }, async (req, ctx) => {
   }
 })
 
-export const PUT = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const PUT = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const body = await req.json()
     const { id, name, slug, description, price_inr, price_usd, image_url, tag, category_id } = body
@@ -66,7 +66,7 @@ export const PUT = withSupabase({ auth: 'none' }, async (req, ctx) => {
   }
 })
 
-export const DELETE = withSupabase({ auth: 'none' }, async (req, ctx) => {
+export const DELETE = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')

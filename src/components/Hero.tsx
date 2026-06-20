@@ -156,19 +156,21 @@ export default function Hero() {
 
       <div className="relative z-10 flex flex-col items-center text-center px-10 md:px-16 w-full">
 
-        <h1
+        <div
           ref={zankaRef}
-          className="font-display text-white leading-none select-none"
+          className="select-none"
           style={{
-            fontSize: 'clamp(5.5rem, 20vw, 18rem)',
-            letterSpacing: '0.06em',
             opacity: 0,
-            WebkitTextStroke: '1.5px rgba(229,33,43,0.7)',
-            textShadow: '0 0 80px rgba(229,33,43,0.5), 0 0 160px rgba(229,33,43,0.2), 0 4px 40px rgba(0,0,0,0.8)',
+            width: 'clamp(280px, 55vw, 700px)',
+            filter: 'drop-shadow(0 0 60px rgba(229,33,43,0.4)) drop-shadow(0 4px 30px rgba(0,0,0,0.6))',
           }}
         >
-          ZANKA
-        </h1>
+          <img
+            src="/logo/zanka-logo-withoutbackground.png"
+            alt="ZANKA"
+            style={{ width: '100%', height: 'auto' }}
+          />
+        </div>
 
         <div
           ref={lettersRef}

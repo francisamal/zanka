@@ -11,13 +11,19 @@ export default function Contact() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(sectionRef.current?.querySelectorAll('.reveal'),
-        { y: 40, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 1.1, stagger: 0.1, ease: 'power4.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
-        }
-      )
+      const container = sectionRef.current
+      if (!container) return
+
+      const reveals = container.querySelectorAll('.reveal')
+      if (reveals.length > 0) {
+        gsap.fromTo(reveals,
+          { y: 40, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1.1, stagger: 0.1, ease: 'power4.out',
+            scrollTrigger: { trigger: container, start: 'top 75%' },
+          }
+        )
+      }
     }, sectionRef)
     return () => ctx.revert()
   }, [])

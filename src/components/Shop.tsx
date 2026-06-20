@@ -199,13 +199,18 @@ export default function Shop() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(sectionRef.current?.querySelector('.section-title'),
-        { y: 50, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 1.1, ease: 'power4.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' },
-        }
-      )
+      const container = sectionRef.current
+      if (!container) return
+      const title = container.querySelector('.section-title')
+      if (title) {
+        gsap.fromTo(title,
+          { y: 50, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1.1, ease: 'power4.out',
+            scrollTrigger: { trigger: container, start: 'top 80%' },
+          }
+        )
+      }
     }, sectionRef)
     return () => ctx.revert()
   }, [])
