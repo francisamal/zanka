@@ -235,7 +235,7 @@ export default function Shop() {
   }
 
   return (
-    <section ref={sectionRef} className="py-24 px-8 md:px-20 lg:px-32">
+    <section ref={sectionRef} style={{ paddingTop: '6rem', paddingBottom: '6rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
       <div id="socks" style={{ scrollMarginTop: '80px' }} />
       <div id="tops" style={{ scrollMarginTop: '80px' }} />
 
@@ -247,7 +247,7 @@ export default function Shop() {
           SHOP NOW
         </h2>
 
-        <div className="mt-8 flex flex-wrap gap-1 p-1 w-fit" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2 }}>
+        <div className="mt-8 flex flex-wrap gap-1 p-1 w-fit" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2, marginBottom: '1.5rem' }}>
           {categories.map(cat => (
             <button
               key={cat.slug}

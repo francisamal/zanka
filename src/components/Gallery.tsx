@@ -43,7 +43,7 @@ export default function Gallery() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-24 px-5 md:px-10">
+    <section ref={sectionRef} style={{ paddingTop: '6rem', paddingBottom: '6rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
       <div className="flex items-end justify-between mb-12">
         <div>
           <p className="font-body text-xs tracking-[0.4em] uppercase font-light mb-3" style={{ color: 'var(--red)' }}>Drop</p>
