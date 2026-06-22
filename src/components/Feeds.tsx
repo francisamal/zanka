@@ -1,0 +1,845 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
+
+interface Review {
+  id: string
+  customer_name: string
+  rating: number
+  review_text: string
+  product_name?: string
+  image_url?: string
+  created_at: string
+}
+
+interface CommunityPost {
+  id: string
+  author_name: string
+  content: string
+  image_url?: string
+  instagram_handle?: string
+  created_at: string
+}
+
+// Fallback data in case DB isn't seeded yet
+const fallbackReviews: Review[] = [
+  {
+    id: 'fb-1',
+    customer_name: 'Priya M.',
+    rating: 5,
+    review_text: 'Got the cutest floral dress for just ₹350! The quality is amazing for a thrifted piece. Absolutely love the handpicked collection.',
+    product_name: 'Floral Summer Dress',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fb-2',
+    customer_name: 'Ananya S.',
+    rating: 4,
+    review_text: 'Found a beautiful branded dress that still had the tags on! Minor loose thread on the hem but it was mentioned before I bought it. Super transparent and trustworthy.',
+    product_name: 'Branded A-Line Dress',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fb-3',
+    customer_name: 'Ritika K.',
+    rating: 5,
+    review_text: 'I was skeptical about thrifted clothes but ZANKA changed my mind. The dress I got looks brand new and cost me only ₹200. 10/10 recommend!',
+    product_name: 'Polka Dot Mini Dress',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fb-4',
+    customer_name: 'Meera J.',
+    rating: 5,
+    review_text: 'Affordable and stylish — my two favorite words! Got 3 dresses under ₹1000 total. Each one is unique and well-maintained.',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fb-5',
+    customer_name: 'Sneha R.',
+    rating: 4,
+    review_text: 'Love the concept of handpicked thrifted fashion. The bodycon dress I ordered fits perfectly and the material feels premium.',
+    product_name: 'Black Bodycon Dress',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fb-6',
+    customer_name: 'Divya P.',
+    rating: 5,
+    review_text: 'Best thrift store online! Every dress is carefully selected. Got a stunning maxi dress for ₹450. My friends couldn\'t believe it was thrifted!',
+    product_name: 'Maxi Dress',
+    created_at: new Date().toISOString(),
+  },
+]
+
+const fallbackPosts: CommunityPost[] = [
+  {
+    id: 'fp-1',
+    author_name: 'Kavya D.',
+    content: 'Styled my ZANKA thrift find for a brunch date! This ₹300 dress is getting more compliments than my designer pieces 😍',
+    instagram_handle: '@kavya.styles',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fp-2',
+    author_name: 'Roshni T.',
+    content: 'Thrifting is not just budget-friendly, it\'s planet-friendly! Loving my pre-loved finds from ZANKA. Each piece tells a story 🌿✨',
+    instagram_handle: '@roshni.thrifts',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fp-3',
+    author_name: 'Aisha N.',
+    content: 'My entire outfit today cost less than ₹500 thanks to ZANKA! Who says you can\'t look expensive on a budget? 💅',
+    instagram_handle: '@aisha.ootd',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'fp-4',
+    author_name: 'Tanvi M.',
+    content: 'Just received my ZANKA package and the curation is *chef\'s kiss*! Every dress is handpicked and it shows. Already planning my next order 🛍️',
+    created_at: new Date().toISOString(),
+  },
+]
+
+function StarRating({ rating, interactive = false, onRate }: { rating: number; interactive?: boolean; onRate?: (r: number) => void }) {
+  const [hovered, setHovered] = useState(0)
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type={interactive ? 'button' : undefined}
+          disabled={!interactive}
+          onClick={() => interactive && onRate?.(star)}
+          onMouseEnter={() => interactive && setHovered(star)}
+          onMouseLeave={() => interactive && setHovered(0)}
+          className={`text-sm transition-all duration-200 ${interactive ? 'cursor-pointer hover:scale-125' : 'cursor-default'}`}
+          style={{
+            color: (interactive ? (hovered || rating) : rating) >= star ? '#e5212b' : 'rgba(255,255,255,0.15)',
+            background: 'none',
+            border: 'none',
+            padding: '1px',
+          }}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function ReviewCard({ review }: { review: Review }) {
+  return (
+    <div
+      className="feed-card group relative overflow-hidden transition-all duration-500 hover:translate-y-[-2px]"
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: '12px',
+        backdropFilter: 'blur(10px)',
+      }}
+    >
+      {/* Hover glow */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(229,33,43,0.04) 0%, transparent 70%)',
+        }}
+      />
+
+      {/* Review Image */}
+      {review.image_url && (
+        <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/10' }}>
+          <img
+            src={review.image_url}
+            alt={`Review by ${review.customer_name}`}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(to top, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.2) 50%, transparent 100%)' }}
+          />
+          {/* Star rating overlaid on image */}
+          <div className="absolute top-3 right-3">
+            <StarRating rating={review.rating} />
+          </div>
+        </div>
+      )}
+
+      <div className="relative z-10 p-5 md:p-6">
+        <div className={`flex items-start justify-between ${review.image_url ? 'mb-2' : 'mb-3'}`}>
+          <div className="flex items-center gap-3">
+            {/* Avatar */}
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center font-body text-sm font-semibold flex-shrink-0"
+              style={{
+                background: 'linear-gradient(135deg, rgba(229,33,43,0.3), rgba(229,33,43,0.1))',
+                color: 'rgba(255,255,255,0.8)',
+              }}
+            >
+              {review.customer_name.charAt(0)}
+            </div>
+            <div>
+              <p className="font-body text-sm text-white font-medium">{review.customer_name}</p>
+              {review.product_name && (
+                <p className="font-body text-[10px] tracking-wider uppercase text-white/30 font-light">{review.product_name}</p>
+              )}
+            </div>
+          </div>
+          {/* Only show stars here if there's no image (otherwise shown on image) */}
+          {!review.image_url && <StarRating rating={review.rating} />}
+        </div>
+
+        <p className="font-body text-sm text-white/55 font-light leading-relaxed">
+          &ldquo;{review.review_text}&rdquo;
+        </p>
+
+        <div className="mt-4 flex items-center gap-2">
+          <div className="h-px flex-1" style={{ background: 'rgba(229,33,43,0.1)' }} />
+          <span className="font-body text-[9px] tracking-[0.2em] uppercase text-white/20 font-light">
+            Verified Purchase
+          </span>
+          <div className="h-px flex-1" style={{ background: 'rgba(229,33,43,0.1)' }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PostCard({ post }: { post: CommunityPost }) {
+  return (
+    <div
+      className="feed-card group relative p-5 md:p-6 transition-all duration-500 hover:translate-y-[-2px]"
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: '12px',
+        backdropFilter: 'blur(10px)',
+      }}
+    >
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(229,33,43,0.04) 0%, transparent 70%)',
+        }}
+      />
+
+      <div className="relative z-10">
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center font-body text-sm font-semibold"
+            style={{
+              background: 'linear-gradient(135deg, rgba(229,33,43,0.2), rgba(180,80,200,0.15))',
+              color: 'rgba(255,255,255,0.8)',
+            }}
+          >
+            {post.author_name.charAt(0)}
+          </div>
+          <div>
+            <p className="font-body text-sm text-white font-medium">{post.author_name}</p>
+            {post.instagram_handle && (
+              <p className="font-body text-[10px] text-white/30 font-light">{post.instagram_handle}</p>
+            )}
+          </div>
+        </div>
+
+        <p className="font-body text-sm text-white/60 font-light leading-relaxed mb-3">
+          {post.content}
+        </p>
+
+        {post.image_url && (
+          <div className="relative w-full overflow-hidden rounded-lg mb-3" style={{ aspectRatio: '16/9' }}>
+            <img src={post.image_url} alt="Community post" className="w-full h-full object-cover" />
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 mt-2">
+          <span
+            className="font-body text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 rounded-full font-medium"
+            style={{
+              background: 'rgba(229,33,43,0.08)',
+              border: '1px solid rgba(229,33,43,0.15)',
+              color: 'rgba(229,33,43,0.7)',
+            }}
+          >
+            Community
+          </span>
+          <span className="font-body text-[9px] text-white/15 font-light">
+            {new Date(post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+function SkeletonCard() {
+  return (
+    <div
+      className="feed-card animate-pulse p-5 md:p-6 rounded-2xl border"
+      style={{
+        background: 'rgba(255,255,255,0.02)',
+        borderColor: 'rgba(255,255,255,0.05)',
+        height: '240px',
+      }}
+    >
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-9 h-9 rounded-full bg-white/5" />
+        <div className="flex-1">
+          <div className="h-3 bg-white/10 rounded w-1/3 mb-2" />
+          <div className="h-2 bg-white/5 rounded w-1/4" />
+        </div>
+      </div>
+      <div className="h-3 bg-white/10 rounded w-full mb-2.5" />
+      <div className="h-3 bg-white/10 rounded w-5/6 mb-2.5" />
+      <div className="h-3 bg-white/10 rounded w-2/3" />
+    </div>
+  )
+}
+
+export default function Feeds() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+  const [activeTab, setActiveTab] = useState<'reviews' | 'posts'>('reviews')
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [posts, setPosts] = useState<CommunityPost[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [modalMode, setModalMode] = useState<'review' | 'post'>('review')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  // Form state
+  const [formName, setFormName] = useState('')
+  const [formRating, setFormRating] = useState(5)
+  const [formText, setFormText] = useState('')
+  const [formProduct, setFormProduct] = useState('')
+  const [formHandle, setFormHandle] = useState('')
+  const [formImageUrl, setFormImageUrl] = useState('')
+
+  useEffect(() => {
+    const loadFeeds = async () => {
+      try {
+        const res = await fetch('/api/feeds')
+        if (res.ok) {
+          const data = await res.json()
+          setReviews(data.reviews ?? [])
+          setPosts(data.posts ?? [])
+        }
+      } catch (err) {
+        console.error('Failed to load feeds:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadFeeds()
+  }, [])
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const container = sectionRef.current
+      if (!container) return
+      const title = container.querySelector('.section-title')
+      if (title) {
+        gsap.fromTo(title,
+          { y: 50, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1.1, ease: 'power4.out',
+            scrollTrigger: { trigger: container, start: 'top 80%' },
+          }
+        )
+      }
+    }, sectionRef)
+    return () => ctx.revert()
+  }, [])
+
+  useEffect(() => {
+    if (!gridRef.current) return
+    const cards = gridRef.current.querySelectorAll('.feed-card')
+    gsap.fromTo(cards,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6, stagger: 0.06, ease: 'power3.out' }
+    )
+  }, [activeTab, reviews, posts])
+
+  const resetForm = () => {
+    setFormName('')
+    setFormRating(5)
+    setFormText('')
+    setFormProduct('')
+    setFormHandle('')
+    setFormImageUrl('')
+    setSubmitted(false)
+  }
+
+  const openModal = (mode: 'review' | 'post') => {
+    setModalMode(mode)
+    resetForm()
+    setShowModal(true)
+  }
+
+  const closeModal = () => {
+    setShowModal(false)
+    resetForm()
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+
+    try {
+      const body = modalMode === 'review'
+        ? {
+            type: 'review',
+            customer_name: formName,
+            rating: formRating,
+            review_text: formText,
+            product_name: formProduct || undefined,
+            image_url: formImageUrl || undefined,
+          }
+        : {
+            type: 'post',
+            author_name: formName,
+            content: formText,
+            instagram_handle: formHandle || undefined,
+            image_url: formImageUrl || undefined,
+          }
+
+      const res = await fetch('/api/feeds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        if (modalMode === 'review' && data.data) {
+          setReviews(prev => [data.data, ...prev])
+        } else if (modalMode === 'post' && data.data) {
+          setPosts(prev => [data.data, ...prev])
+        }
+        setSubmitted(true)
+        setTimeout(() => {
+          closeModal()
+          setActiveTab(modalMode === 'review' ? 'reviews' : 'posts')
+        }, 2000)
+      } else {
+        const err = await res.json()
+        alert(err.error || 'Something went wrong')
+      }
+    } catch (err) {
+      console.error('Submit error:', err)
+      alert('Failed to submit. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <>
+      <section
+        ref={sectionRef}
+        id="feeds"
+        style={{
+          paddingTop: '6rem',
+          paddingBottom: '6rem',
+          paddingLeft: 'clamp(1.5rem, 3vw, 6rem)',
+          paddingRight: 'clamp(1.5rem, 3vw, 6rem)',
+        }}
+      >
+        {/* Header */}
+        <div className="section-title mb-12" style={{ opacity: 0 }}>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <p className="font-body text-xs tracking-[0.4em] uppercase font-light mb-3" style={{ color: 'var(--red)' }}>
+                Community
+              </p>
+              <h2 className="font-display text-[clamp(2rem,6vw,5rem)] text-white leading-none tracking-widest">
+                THE FEED
+              </h2>
+              <p className="font-body text-sm text-white/35 font-light mt-3 max-w-lg">
+                Real stories from our community. See what others are saying and share your own experience.
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => openModal('review')}
+                className="font-body text-[10px] md:text-xs tracking-[0.2em] uppercase px-5 py-2.5 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'var(--red)',
+                  color: '#fff',
+                  borderRadius: '100px',
+                  boxShadow: '0 4px 15px rgba(229,33,43,0.2)',
+                }}
+              >
+                ★ Write a Review
+              </button>
+              <button
+                onClick={() => openModal('post')}
+                className="font-body text-[10px] md:text-xs tracking-[0.2em] uppercase px-5 py-2.5 font-medium border transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  borderColor: 'rgba(255,255,255,0.15)',
+                  color: 'rgba(255,255,255,0.6)',
+                  borderRadius: '100px',
+                }}
+              >
+                ✦ Post Your Look
+              </button>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div
+            className="mt-8 flex gap-1 p-1 w-fit"
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              borderRadius: '100px',
+            }}
+          >
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className="font-body text-xs tracking-[0.2em] uppercase px-6 py-2.5 transition-all duration-300 font-medium"
+              style={{
+                background: activeTab === 'reviews' ? 'var(--red)' : 'transparent',
+                color: activeTab === 'reviews' ? '#fff' : 'rgba(255,255,255,0.4)',
+                borderRadius: '100px',
+              }}
+            >
+              ★ Reviews ({reviews.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('posts')}
+              className="font-body text-xs tracking-[0.2em] uppercase px-6 py-2.5 transition-all duration-300 font-medium"
+              style={{
+                background: activeTab === 'posts' ? 'var(--red)' : 'transparent',
+                color: activeTab === 'posts' ? '#fff' : 'rgba(255,255,255,0.4)',
+                borderRadius: '100px',
+              }}
+            >
+              ✦ Community ({posts.length})
+            </button>
+          </div>
+        </div>
+
+        {/* Content Grid */}
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+        >
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
+          ) : activeTab === 'reviews' ? (
+            reviews.length > 0 ? (
+              reviews.map((review) => <ReviewCard key={review.id} review={review} />)
+            ) : (
+              <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                <div className="text-3xl mb-3" style={{ color: 'var(--red)' }}>★</div>
+                <p className="font-body text-sm text-white/40 font-light mb-4">No reviews yet. Be the first to share your experience!</p>
+                <button
+                  onClick={() => openModal('review')}
+                  className="font-body text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{
+                    background: 'var(--red)',
+                    color: '#fff',
+                    borderRadius: '100px',
+                    boxShadow: '0 4px 15px rgba(229,33,43,0.2)',
+                  }}
+                >
+                  ★ Write a Review
+                </button>
+              </div>
+            )
+          ) : (
+            posts.length > 0 ? (
+              posts.map((post) => <PostCard key={post.id} post={post} />)
+            ) : (
+              <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                <div className="text-3xl mb-3" style={{ color: 'var(--red)' }}>✦</div>
+                <p className="font-body text-sm text-white/40 font-light mb-4">No community posts yet. Share your outfit look!</p>
+                <button
+                  onClick={() => openModal('post')}
+                  className="font-body text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 font-medium border transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{
+                    borderColor: 'rgba(255,255,255,0.15)',
+                    color: 'rgba(255,255,255,0.6)',
+                    borderRadius: '100px',
+                  }}
+                >
+                  ✦ Post Your Look
+                </button>
+              </div>
+            )
+          )}
+        </div>
+
+        {/* Average Rating Bar (for reviews tab) */}
+        {activeTab === 'reviews' && reviews.length > 0 && (
+          <div
+            className="mt-10 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 py-5 px-8 mx-auto w-fit"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.05)',
+              borderRadius: '100px',
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="font-display text-3xl text-white tracking-wider">
+                {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)}
+              </span>
+              <StarRating rating={Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length)} />
+            </div>
+            <div className="h-6 w-px hidden md:block" style={{ background: 'rgba(255,255,255,0.1)' }} />
+            <p className="font-body text-xs text-white/40 tracking-wider uppercase font-light">
+              Based on {reviews.length} reviews
+            </p>
+          </div>
+        )}
+
+        {/* Instagram Link */}
+        <div className="mt-10 flex justify-center">
+          <a
+            href="https://www.instagram.com/wardrobeofzanka"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 font-body text-xs tracking-[0.25em] uppercase text-white/30 hover:text-white transition-colors duration-300"
+          >
+            <span>@wardrobeofzanka</span>
+            <span className="w-8 h-px" style={{ background: 'var(--red)' }} />
+          </a>
+        </div>
+      </section>
+
+      {/* Modal Overlay */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) closeModal() }}
+        >
+          <div
+            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            style={{
+              background: 'rgba(20,20,20,0.95)',
+              border: '1px solid rgba(229,33,43,0.15)',
+              borderRadius: '16px',
+              boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(229,33,43,0.08)',
+              backdropFilter: 'blur(20px)',
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 hover:bg-white/10"
+              style={{ color: 'rgba(255,255,255,0.4)' }}
+            >
+              ✕
+            </button>
+
+            {submitted ? (
+              /* Success State */
+              <div className="p-10 text-center">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+                  style={{ background: 'rgba(229,33,43,0.15)' }}
+                >
+                  <span className="text-2xl">✓</span>
+                </div>
+                <h3 className="font-display text-3xl text-white tracking-widest mb-3">THANK YOU!</h3>
+                <p className="font-body text-sm text-white/50 font-light">
+                  {modalMode === 'review'
+                    ? 'Your review has been published. We appreciate your feedback!'
+                    : 'Your post has been published. Thanks for sharing!'
+                  }
+                </p>
+              </div>
+            ) : (
+              /* Form */
+              <form onSubmit={handleSubmit} className="p-7 md:p-8">
+                <div className="mb-7">
+                  <p className="font-body text-[10px] tracking-[0.4em] uppercase font-light mb-2" style={{ color: 'var(--red)' }}>
+                    {modalMode === 'review' ? 'Write a Review' : 'Post Your Look'}
+                  </p>
+                  <h3 className="font-display text-2xl text-white tracking-widest">
+                    {modalMode === 'review' ? 'SHARE YOUR EXPERIENCE' : 'SHARE YOUR STYLE'}
+                  </h3>
+                </div>
+
+                {/* Mode Toggle */}
+                <div
+                  className="flex gap-1 p-1 mb-6"
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    borderRadius: '100px',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setModalMode('review')}
+                    className="flex-1 font-body text-[10px] tracking-[0.15em] uppercase py-2 transition-all duration-300 font-medium"
+                    style={{
+                      background: modalMode === 'review' ? 'var(--red)' : 'transparent',
+                      color: modalMode === 'review' ? '#fff' : 'rgba(255,255,255,0.4)',
+                      borderRadius: '100px',
+                    }}
+                  >
+                    ★ Review
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModalMode('post')}
+                    className="flex-1 font-body text-[10px] tracking-[0.15em] uppercase py-2 transition-all duration-300 font-medium"
+                    style={{
+                      background: modalMode === 'post' ? 'var(--red)' : 'transparent',
+                      color: modalMode === 'post' ? '#fff' : 'rgba(255,255,255,0.4)',
+                      borderRadius: '100px',
+                    }}
+                  >
+                    ✦ Post
+                  </button>
+                </div>
+
+                {/* Name */}
+                <div className="mb-4">
+                  <label className="font-body text-[10px] tracking-[0.2em] uppercase text-white/40 font-medium block mb-2">
+                    Your Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formName}
+                    onChange={(e) => setFormName(e.target.value)}
+                    placeholder="e.g., Priya M."
+                    className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300 focus:border-red/40"
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '8px',
+                    }}
+                  />
+                </div>
+
+                {/* Rating (review only) */}
+                {modalMode === 'review' && (
+                  <div className="mb-4">
+                    <label className="font-body text-[10px] tracking-[0.2em] uppercase text-white/40 font-medium block mb-2">
+                      Rating *
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <StarRating rating={formRating} interactive onRate={setFormRating} />
+                      <span className="font-body text-xs text-white/30">{formRating}/5</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Text */}
+                <div className="mb-4">
+                  <label className="font-body text-[10px] tracking-[0.2em] uppercase text-white/40 font-medium block mb-2">
+                    {modalMode === 'review' ? 'Your Review *' : 'Your Post *'}
+                  </label>
+                  <textarea
+                    required
+                    value={formText}
+                    onChange={(e) => setFormText(e.target.value)}
+                    placeholder={modalMode === 'review' ? 'Tell us about your experience...' : 'Share your style story...'}
+                    rows={4}
+                    className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300 focus:border-red/40 resize-none"
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '8px',
+                    }}
+                  />
+                </div>
+
+                {/* Product Name (review only) */}
+                {modalMode === 'review' && (
+                  <div className="mb-4">
+                    <label className="font-body text-[10px] tracking-[0.2em] uppercase text-white/40 font-medium block mb-2">
+                      Product Name <span className="text-white/20">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formProduct}
+                      onChange={(e) => setFormProduct(e.target.value)}
+                      placeholder="e.g., Floral Summer Dress"
+                      className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: '8px',
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Instagram Handle (post only) */}
+                {modalMode === 'post' && (
+                  <div className="mb-4">
+                    <label className="font-body text-[10px] tracking-[0.2em] uppercase text-white/40 font-medium block mb-2">
+                      Instagram Handle <span className="text-white/20">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formHandle}
+                      onChange={(e) => setFormHandle(e.target.value)}
+                      placeholder="e.g., @your.handle"
+                      className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: '8px',
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Image URL */}
+                <div className="mb-6">
+                  <label className="font-body text-[10px] tracking-[0.2em] uppercase text-white/40 font-medium block mb-2">
+                    Image URL <span className="text-white/20">(optional)</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={formImageUrl}
+                    onChange={(e) => setFormImageUrl(e.target.value)}
+                    placeholder="Paste an image link..."
+                    className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '8px',
+                    }}
+                  />
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full font-body text-xs tracking-[0.3em] uppercase py-3.5 font-medium transition-all duration-300 hover:opacity-80 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40"
+                  style={{
+                    background: 'var(--red)',
+                    color: '#fff',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 20px rgba(229,33,43,0.25)',
+                  }}
+                >
+                  {submitting ? 'Submitting...' : (modalMode === 'review' ? 'Submit Review' : 'Publish Post')}
+                </button>
+
+                <p className="font-body text-[10px] text-white/20 text-center mt-4 font-light">
+                  By submitting, you agree to share your experience with the ZANKA community.
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  )
+}

@@ -42,13 +42,13 @@ export default function Nav() {
 
           {/* Centered navigation links */}
           <ul className="hidden md:flex items-center gap-8">
-            {['Socks', 'Tops', 'About', 'Contact'].map((item) => (
-              <li key={item}>
+            {[{ label: 'Shop', href: '#socks' }, { label: 'Feeds', href: '#feeds' }, { label: 'About', href: '#about' }, { label: 'Contact', href: '#contact' }].map((item) => (
+              <li key={item.label}>
                 <a
-                  href={`#${item.toLowerCase()}`}
+                  href={item.href}
                   className="font-body text-xs tracking-[0.25em] uppercase text-white/50 hover:text-white transition-colors duration-300 relative group font-medium"
                 >
-                  {item}
+                  {item.label}
                   <span
                     className="absolute -bottom-1 left-0 h-px w-0 group-hover:w-full transition-all duration-300"
                     style={{ background: 'var(--red)' }}
@@ -90,14 +90,14 @@ export default function Nav() {
         style={{ background: 'rgba(8,8,8,0.98)' }}
       >
         <ul className="flex flex-col gap-8 text-center">
-          {['Socks', 'Tops', 'About', 'Contact'].map((item) => (
-            <li key={item}>
+          {[{ label: 'Shop', href: '#socks' }, { label: 'Feeds', href: '#feeds' }, { label: 'About', href: '#about' }, { label: 'Contact', href: '#contact' }].map((item) => (
+            <li key={item.label}>
               <a
-                href={`#${item.toLowerCase()}`}
+                href={item.href}
                 className="font-display text-4xl tracking-widest text-white hover:text-red transition-colors duration-300"
                 onClick={() => setMenuOpen(false)}
               >
-                {item}
+                {item.label}
               </a>
             </li>
           ))}

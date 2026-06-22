@@ -139,13 +139,13 @@ export default function Footer() {
               Explore
             </h4>
             <div className="flex flex-col gap-3">
-              {['Socks', 'Tops', 'About'].map((item) => (
+              {[{ label: 'Shop', href: '#socks' }, { label: 'Feeds', href: '#feeds' }, { label: 'About', href: '#about' }].map((item) => (
                 <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={item.label}
+                  href={item.href}
                   className="font-body text-xs tracking-[0.25em] uppercase text-white/50 hover:text-white transition-colors duration-300 font-medium"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
             </div>

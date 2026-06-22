@@ -1,5 +1,5 @@
 export default function Marquee() {
-  const items = ['Beyond The Usual', 'Pop Culture', 'Statement Fits', 'Anime Socks', 'Street Style', 'Free Your Fit', 'Zanka']
+  const items = ['Handpicked Dresses', 'Thrifted Finds', 'Branded Styles', '₹150 – ₹600', 'Pre-loved Fashion', 'Unique Picks', 'Beyond The Usual', 'Zanka']
 
   return (
     <div className="relative overflow-hidden py-5 mx-5 md:mx-10 border-y" style={{ borderColor: 'rgba(229,33,43,0.2)' }}>

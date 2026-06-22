@@ -5,7 +5,7 @@ import Hero from '@/components/Hero'
 import Marquee from '@/components/Marquee'
 import Shop from '@/components/Shop'
 import About from '@/components/About'
-import Gallery from '@/components/Gallery'
+import Feeds from '@/components/Feeds'
 import Footer from '@/components/Footer'
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
         <Marquee />
         <Shop />
         <About />
-        <Gallery />
+        <Feeds />
       </main>
       <Footer />
     </SmoothScroll>
