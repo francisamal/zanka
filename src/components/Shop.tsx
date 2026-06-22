@@ -240,7 +240,7 @@ export default function Shop() {
   }
 
   return (
-    <section ref={sectionRef} style={{ paddingTop: '6rem', paddingBottom: '6rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
+    <section ref={sectionRef} style={{ paddingTop: '3rem', paddingBottom: '3rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
       <div id="socks" style={{ scrollMarginTop: '80px' }} />
       <div id="tops" style={{ scrollMarginTop: '80px' }} />
 

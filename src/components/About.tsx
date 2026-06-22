@@ -41,7 +41,7 @@ export default function About() {
   }, [])
 
   return (
-    <section ref={sectionRef} id="about" style={{ paddingTop: '7rem', paddingBottom: '7rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
+    <section ref={sectionRef} id="about" style={{ paddingTop: '3rem', paddingBottom: '3rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="reveal-image relative overflow-hidden" style={{ aspectRatio: '2/3' }}>
           <Image

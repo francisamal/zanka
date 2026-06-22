@@ -109,7 +109,7 @@ const fallbackPosts: CommunityPost[] = [
 function StarRating({ rating, interactive = false, onRate }: { rating: number; interactive?: boolean; onRate?: (r: number) => void }) {
   const [hovered, setHovered] = useState(0)
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
@@ -118,7 +118,7 @@ function StarRating({ rating, interactive = false, onRate }: { rating: number; i
           onClick={() => interactive && onRate?.(star)}
           onMouseEnter={() => interactive && setHovered(star)}
           onMouseLeave={() => interactive && setHovered(0)}
-          className={`text-sm transition-all duration-200 ${interactive ? 'cursor-pointer hover:scale-125' : 'cursor-default'}`}
+          className={`text-[13px] transition-all duration-200 ${interactive ? 'cursor-pointer hover:scale-125' : 'cursor-default'}`}
           style={{
             color: (interactive ? (hovered || rating) : rating) >= star ? '#e5212b' : 'rgba(255,255,255,0.15)',
             background: 'none',
@@ -136,75 +136,71 @@ function StarRating({ rating, interactive = false, onRate }: { rating: number; i
 function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="feed-card group relative overflow-hidden transition-all duration-500 hover:translate-y-[-2px]"
+      className="feed-card break-inside-avoid mb-6 md:mb-8 group relative overflow-hidden transition-all duration-500 hover:-translate-y-1"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: '12px',
+        background: 'linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))',
+        border: '1px solid rgba(255,255,255,0.05)',
+        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.3)',
+        borderRadius: '20px',
         backdropFilter: 'blur(10px)',
       }}
     >
-      {/* Hover glow */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(229,33,43,0.04) 0%, transparent 70%)',
+          background: 'radial-gradient(circle at 50% 0%, rgba(229,33,43,0.08) 0%, transparent 60%)',
         }}
       />
 
-      {/* Review Image */}
-      {review.image_url && (
-        <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/10' }}>
-          <img
-            src={review.image_url}
-            alt={`Review by ${review.customer_name}`}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(to top, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.2) 50%, transparent 100%)' }}
-          />
-          {/* Star rating overlaid on image */}
-          <div className="absolute top-3 right-3">
-            <StarRating rating={review.rating} />
-          </div>
-        </div>
-      )}
-
-      <div className="relative z-10 p-5 md:p-6">
-        <div className={`flex items-start justify-between ${review.image_url ? 'mb-2' : 'mb-3'}`}>
-          <div className="flex items-center gap-3">
-            {/* Avatar */}
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center font-body text-sm font-semibold flex-shrink-0"
-              style={{
-                background: 'linear-gradient(135deg, rgba(229,33,43,0.3), rgba(229,33,43,0.1))',
-                color: 'rgba(255,255,255,0.8)',
-              }}
-            >
-              {review.customer_name.charAt(0)}
-            </div>
-            <div>
-              <p className="font-body text-sm text-white font-medium">{review.customer_name}</p>
-              {review.product_name && (
-                <p className="font-body text-[10px] tracking-wider uppercase text-white/30 font-light">{review.product_name}</p>
-              )}
+      <div className="relative z-10 p-5 md:p-6 flex flex-col justify-between h-full">
+        <div>
+          <div className="flex items-start justify-between mb-5">
+            <div className="flex items-center gap-3.5">
+              <div
+                className="w-11 h-11 rounded-full flex items-center justify-center font-body text-sm font-semibold flex-shrink-0 shadow-[0_0_15px_rgba(229,33,43,0.15)]"
+                style={{
+                  background: 'linear-gradient(135deg, var(--red), #8a0c14)',
+                  color: '#fff',
+                }}
+              >
+                {review.customer_name.charAt(0)}
+              </div>
+              <div>
+                <p className="font-body text-[15px] text-white font-medium">{review.customer_name}</p>
+                {review.product_name && (
+                  <p className="font-body text-[10px] tracking-wider uppercase text-white/40 mt-0.5">{review.product_name}</p>
+                )}
+              </div>
             </div>
           </div>
-          {/* Only show stars here if there's no image (otherwise shown on image) */}
-          {!review.image_url && <StarRating rating={review.rating} />}
+
+        <div className="mb-4">
+          <StarRating rating={review.rating} />
         </div>
 
-        <p className="font-body text-sm text-white/55 font-light leading-relaxed">
+        <p className="font-body text-[14px] text-white/80 font-light leading-relaxed mb-6">
           &ldquo;{review.review_text}&rdquo;
         </p>
 
-        <div className="mt-4 flex items-center gap-2">
-          <div className="h-px flex-1" style={{ background: 'rgba(229,33,43,0.1)' }} />
-          <span className="font-body text-[9px] tracking-[0.2em] uppercase text-white/20 font-light">
-            Verified Purchase
+        {review.image_url && (
+          <div className="relative w-full overflow-hidden rounded-xl mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.3)]" style={{ aspectRatio: '4/5' }}>
+            <img
+              src={review.image_url}
+              alt={`Review by ${review.customer_name}`}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          </div>
+        )}
+        </div>
+
+        <div className="pt-5 border-t border-white/5 flex items-center justify-between mt-auto">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-[var(--red)]" />
+            <span className="font-body text-[10px] tracking-widest uppercase text-white/30">Verified</span>
+          </div>
+          <span className="font-body text-[10px] tracking-widest uppercase text-white/20">
+            {new Date(review.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
           </span>
-          <div className="h-px flex-1" style={{ background: 'rgba(229,33,43,0.1)' }} />
         </div>
       </div>
     </div>
@@ -214,63 +210,68 @@ function ReviewCard({ review }: { review: Review }) {
 function PostCard({ post }: { post: CommunityPost }) {
   return (
     <div
-      className="feed-card group relative p-5 md:p-6 transition-all duration-500 hover:translate-y-[-2px]"
+      className="feed-card break-inside-avoid mb-6 group relative p-5 md:p-6 transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between h-full"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: '12px',
+        background: 'linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))',
+        border: '1px solid rgba(255,255,255,0.05)',
+        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.3)',
+        borderRadius: '16px',
         backdropFilter: 'blur(10px)',
       }}
     >
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(229,33,43,0.04) 0%, transparent 70%)',
+          background: 'radial-gradient(circle at 50% 0%, rgba(229,33,43,0.08) 0%, transparent 60%)',
         }}
       />
 
-      <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-4">
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center font-body text-sm font-semibold"
-            style={{
-              background: 'linear-gradient(135deg, rgba(229,33,43,0.2), rgba(180,80,200,0.15))',
-              color: 'rgba(255,255,255,0.8)',
-            }}
-          >
-            {post.author_name.charAt(0)}
+      <div className="relative z-10 flex flex-col flex-1">
+        <div>
+          <div className="flex items-center gap-3.5 mb-5">
+            <div
+              className="w-11 h-11 rounded-full flex items-center justify-center font-body text-sm font-semibold shadow-[0_0_15px_rgba(229,33,43,0.15)]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(229,33,43,0.2), rgba(180,80,200,0.15))',
+                color: 'rgba(255,255,255,0.9)',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              {post.author_name.charAt(0)}
+            </div>
+            <div>
+              <p className="font-body text-[15px] text-white font-medium">{post.author_name}</p>
+              {post.instagram_handle && (
+                <p className="font-body text-[10px] tracking-wider text-white/40 mt-0.5">{post.instagram_handle}</p>
+              )}
+            </div>
           </div>
-          <div>
-            <p className="font-body text-sm text-white font-medium">{post.author_name}</p>
-            {post.instagram_handle && (
-              <p className="font-body text-[10px] text-white/30 font-light">{post.instagram_handle}</p>
-            )}
-          </div>
-        </div>
 
-        <p className="font-body text-sm text-white/60 font-light leading-relaxed mb-3">
-          {post.content}
-        </p>
+          <p className="font-body text-[14px] text-white/80 font-light leading-relaxed mb-6">
+            {post.content}
+          </p>
 
         {post.image_url && (
-          <div className="relative w-full overflow-hidden rounded-lg mb-3" style={{ aspectRatio: '16/9' }}>
-            <img src={post.image_url} alt="Community post" className="w-full h-full object-cover" />
+          <div className="relative w-full overflow-hidden rounded-xl mb-6 shadow-lg" style={{ aspectRatio: '4/5' }}>
+            <img src={post.image_url} alt="Community post" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           </div>
         )}
 
-        <div className="flex items-center gap-2 mt-2">
+        </div>
+
+        <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/5">
           <span
-            className="font-body text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 rounded-full font-medium"
+            className="font-body text-[10px] tracking-[0.15em] uppercase px-4 py-2 rounded-full font-medium"
             style={{
-              background: 'rgba(229,33,43,0.08)',
-              border: '1px solid rgba(229,33,43,0.15)',
-              color: 'rgba(229,33,43,0.7)',
+              background: 'rgba(229,33,43,0.1)',
+              border: '1px solid rgba(229,33,43,0.2)',
+              color: 'rgba(229,33,43,0.9)',
             }}
           >
             Community
           </span>
-          <span className="font-body text-[9px] text-white/15 font-light">
-            {new Date(post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+          <span className="font-body text-xs tracking-widest uppercase text-white/20">
+            {new Date(post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
           </span>
         </div>
       </div>
@@ -360,9 +361,10 @@ export default function Feeds() {
   useEffect(() => {
     if (!gridRef.current) return
     const cards = gridRef.current.querySelectorAll('.feed-card')
+    gsap.killTweensOf(cards)
     gsap.fromTo(cards,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.6, stagger: 0.06, ease: 'power3.out' }
+      { opacity: 0, scale: 0.95 },
+      { opacity: 1, scale: 1, duration: 0.5, stagger: 0.04, ease: 'power2.out', clearProps: 'all' }
     )
   }, [activeTab, reviews, posts])
 
@@ -439,14 +441,17 @@ export default function Feeds() {
     }
   }
 
+  const reviewsWithoutImage = reviews.filter(r => !r.image_url)
+  const reviewsWithImage = reviews.filter(r => !!r.image_url)
+
   return (
     <>
       <section
         ref={sectionRef}
         id="feeds"
         style={{
-          paddingTop: '6rem',
-          paddingBottom: '6rem',
+          paddingTop: '3rem',
+          paddingBottom: '3rem',
           paddingLeft: 'clamp(1.5rem, 3vw, 6rem)',
           paddingRight: 'clamp(1.5rem, 3vw, 6rem)',
         }}
@@ -493,49 +498,78 @@ export default function Feeds() {
             </div>
           </div>
 
-          {/* Tabs */}
-          <div
-            className="mt-8 flex gap-1 p-1 w-fit"
-            style={{
-              background: 'rgba(255,255,255,0.04)',
-              borderRadius: '100px',
-            }}
-          >
+          {/* Premium Tabs */}
+          <div className="mt-12 flex gap-8 md:gap-14 border-b border-white/10 pb-4 w-full md:w-auto overflow-x-auto no-scrollbar">
             <button
               onClick={() => setActiveTab('reviews')}
-              className="font-body text-xs tracking-[0.2em] uppercase px-6 py-2.5 transition-all duration-300 font-medium"
-              style={{
-                background: activeTab === 'reviews' ? 'var(--red)' : 'transparent',
-                color: activeTab === 'reviews' ? '#fff' : 'rgba(255,255,255,0.4)',
-                borderRadius: '100px',
-              }}
+              className={`font-display text-2xl md:text-3xl tracking-widest uppercase transition-all duration-500 relative flex items-center gap-3 shrink-0 ${
+                activeTab === 'reviews' ? 'text-white' : 'text-white/30 hover:text-white/60'
+              }`}
             >
-              ★ Reviews ({reviews.length})
+              <span>Reviews</span>
+              <span className="font-body text-[10px] px-2 py-0.5 rounded-full bg-white/10">{reviews.length}</span>
+              {activeTab === 'reviews' && (
+                <span className="absolute -bottom-[17px] left-0 w-full h-[2px] bg-[var(--red)] shadow-[0_0_10px_rgba(229,33,43,0.8)]" />
+              )}
             </button>
             <button
               onClick={() => setActiveTab('posts')}
-              className="font-body text-xs tracking-[0.2em] uppercase px-6 py-2.5 transition-all duration-300 font-medium"
-              style={{
-                background: activeTab === 'posts' ? 'var(--red)' : 'transparent',
-                color: activeTab === 'posts' ? '#fff' : 'rgba(255,255,255,0.4)',
-                borderRadius: '100px',
-              }}
+              className={`font-display text-2xl md:text-3xl tracking-widest uppercase transition-all duration-500 relative flex items-center gap-3 shrink-0 ${
+                activeTab === 'posts' ? 'text-white' : 'text-white/30 hover:text-white/60'
+              }`}
             >
-              ✦ Community ({posts.length})
+              <span>Community</span>
+              <span className="font-body text-[10px] px-2 py-0.5 rounded-full bg-white/10">{posts.length}</span>
+              {activeTab === 'posts' && (
+                <span className="absolute -bottom-[17px] left-0 w-full h-[2px] bg-[var(--red)] shadow-[0_0_10px_rgba(229,33,43,0.8)]" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Content Grid */}
-        <div
-          ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
-        >
+        <div ref={gridRef} className="w-full">
           {loading ? (
-            Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 w-full">
+              {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
           ) : activeTab === 'reviews' ? (
             reviews.length > 0 ? (
-              reviews.map((review) => <ReviewCard key={review.id} review={review} />)
+              <div className="flex flex-col gap-14">
+                {reviewsWithoutImage.length > 0 && (
+                  <div>
+                    <div
+                      className="flex gap-3 md:gap-4 w-full overflow-x-auto pb-6 snap-x snap-mandatory items-start"
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent' }}
+                    >
+                      {reviewsWithoutImage.map((review) => (
+                        <div key={review.id} className="w-[85vw] sm:w-[280px] md:w-[320px] shrink-0 snap-start flex">
+                          <ReviewCard review={review} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {reviewsWithImage.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-4 mb-6 md:mb-8">
+                      <h3 className="font-display text-2xl text-white/80 tracking-widest uppercase">Customer Photos</h3>
+                      <div className="h-px flex-1 bg-white/10" />
+                    </div>
+                    <div
+                      className="flex gap-3 md:gap-4 w-full overflow-x-auto pb-6 snap-x snap-mandatory items-start"
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent' }}
+                    >
+                      {reviewsWithImage.map((review) => (
+                        <div key={review.id} className="w-[85vw] sm:w-[280px] md:w-[320px] shrink-0 snap-start flex">
+                          <ReviewCard review={review} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
                 <div className="text-3xl mb-3" style={{ color: 'var(--red)' }}>★</div>
@@ -555,25 +589,27 @@ export default function Feeds() {
               </div>
             )
           ) : (
-            posts.length > 0 ? (
-              posts.map((post) => <PostCard key={post.id} post={post} />)
-            ) : (
-              <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
-                <div className="text-3xl mb-3" style={{ color: 'var(--red)' }}>✦</div>
-                <p className="font-body text-sm text-white/40 font-light mb-4">No community posts yet. Share your outfit look!</p>
-                <button
-                  onClick={() => openModal('post')}
-                  className="font-body text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 font-medium border transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
-                  style={{
-                    borderColor: 'rgba(255,255,255,0.15)',
-                    color: 'rgba(255,255,255,0.6)',
-                    borderRadius: '100px',
-                  }}
-                >
-                  ✦ Post Your Look
-                </button>
-              </div>
-            )
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 w-full">
+              {posts.length > 0 ? (
+                posts.map((post) => <PostCard key={post.id} post={post} />)
+              ) : (
+                <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                  <div className="text-3xl mb-3" style={{ color: 'var(--red)' }}>✦</div>
+                  <p className="font-body text-sm text-white/40 font-light mb-4">No community posts yet. Share your outfit look!</p>
+                  <button
+                    onClick={() => openModal('post')}
+                    className="font-body text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 font-medium border transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
+                    style={{
+                      borderColor: 'rgba(255,255,255,0.15)',
+                      color: 'rgba(255,255,255,0.6)',
+                      borderRadius: '100px',
+                    }}
+                  >
+                    ✦ Post Your Look
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
 

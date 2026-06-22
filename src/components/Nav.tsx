@@ -37,7 +37,6 @@ export default function Nav() {
               textShadow: '0 0 10px rgba(229,33,43,0.2)',
             }}
           >
-            ZANKA
           </a>
 
           {/* Centered navigation links */}
