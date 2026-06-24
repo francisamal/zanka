@@ -392,15 +392,16 @@ export default function Hero() {
       <div ref={ctaRef} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
         <a
           href="#socks"
-          className="font-body text-sm tracking-[0.35em] uppercase px-12 py-4 font-semibold transition-all duration-300 hover:scale-[1.05] active:scale-[0.97]"
-          style={{
-            background: 'var(--red)',
-            color: '#fff',
-            opacity: 0,
-            boxShadow: '0 8px 30px rgba(229,33,43,0.35), 0 0 60px rgba(229,33,43,0.1)',
-          }}
+          className="relative inline-flex items-center justify-center px-12 py-5 font-display text-xl md:text-2xl tracking-[0.2em] uppercase text-white bg-[var(--red)] rounded-md overflow-hidden group transition-all duration-500 hover:shadow-[0_10px_40px_rgba(229,33,43,0.6)]"
+          style={{ opacity: 0 }}
         >
-          Shop Now
+          <span className="relative z-10 flex items-center gap-4">
+            SHOP NOW
+            <svg className="w-6 h-6 transition-transform duration-500 group-hover:translate-x-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </span>
+          <div className="absolute inset-0 bg-white/20 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
         </a>
         <div className="animate-bounce-arrow" style={{ opacity: 0 }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">

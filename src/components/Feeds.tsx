@@ -473,26 +473,20 @@ export default function Feeds() {
             <div className="flex gap-2">
               <button
                 onClick={() => openModal('review')}
-                className="font-body text-[10px] md:text-xs tracking-[0.2em] uppercase px-5 py-2.5 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                style={{
-                  background: 'var(--red)',
-                  color: '#fff',
-                  borderRadius: '100px',
-                  boxShadow: '0 4px 15px rgba(229,33,43,0.2)',
-                }}
+                className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1"
               >
-                ★ Write a Review
+                <span className="relative z-10 flex items-center gap-2">
+                  <span className="group-hover:rotate-12 transition-transform duration-300">★</span> Write a Review
+                </span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               </button>
               <button
                 onClick={() => openModal('post')}
-                className="font-body text-[10px] md:text-xs tracking-[0.2em] uppercase px-5 py-2.5 font-medium border transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
-                style={{
-                  borderColor: 'rgba(255,255,255,0.15)',
-                  color: 'rgba(255,255,255,0.6)',
-                  borderRadius: '100px',
-                }}
+                className="relative inline-flex items-center justify-center gap-2 bg-transparent text-white/70 font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md border-2 border-white/20 overflow-hidden group transition-all duration-300 hover:border-white hover:text-white hover:-translate-y-1"
               >
-                ✦ Post Your Look
+                <span className="relative z-10 flex items-center gap-2">
+                  <span className="group-hover:rotate-90 transition-transform duration-300">✦</span> Post Your Look
+                </span>
               </button>
             </div>
           </div>
@@ -575,15 +569,12 @@ export default function Feeds() {
                 <p className="font-body text-sm text-white/40 font-light mb-4">No reviews yet. Be the first to share your experience!</p>
                 <button
                   onClick={() => openModal('review')}
-                  className="font-body text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                  style={{
-                    background: 'var(--red)',
-                    color: '#fff',
-                    borderRadius: '100px',
-                    boxShadow: '0 4px 15px rgba(229,33,43,0.2)',
-                  }}
+                  className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1 mx-auto"
                 >
-                  ★ Write a Review
+                  <span className="relative z-10 flex items-center gap-2">
+                    <span className="group-hover:rotate-12 transition-transform duration-300">★</span> Write a Review
+                  </span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 </button>
               </div>
             )
@@ -597,14 +588,11 @@ export default function Feeds() {
                   <p className="font-body text-sm text-white/40 font-light mb-4">No community posts yet. Share your outfit look!</p>
                   <button
                     onClick={() => openModal('post')}
-                    className="font-body text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 font-medium border transition-all duration-300 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98]"
-                    style={{
-                      borderColor: 'rgba(255,255,255,0.15)',
-                      color: 'rgba(255,255,255,0.6)',
-                      borderRadius: '100px',
-                    }}
+                    className="relative inline-flex items-center justify-center gap-2 bg-transparent text-white/70 font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md border-2 border-white/20 overflow-hidden group transition-all duration-300 hover:border-white hover:text-white hover:-translate-y-1 mx-auto"
                   >
-                    ✦ Post Your Look
+                    <span className="relative z-10 flex items-center gap-2">
+                      <span className="group-hover:rotate-90 transition-transform duration-300">✦</span> Post Your Look
+                    </span>
                   </button>
                 </div>
               )}
@@ -856,15 +844,12 @@ export default function Feeds() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full font-body text-xs tracking-[0.3em] uppercase py-3.5 font-medium transition-all duration-300 hover:opacity-80 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40"
-                  style={{
-                    background: 'var(--red)',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 20px rgba(229,33,43,0.25)',
-                  }}
+                  className="relative w-full overflow-hidden bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase py-4 rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] disabled:opacity-50 disabled:hover:shadow-none"
                 >
-                  {submitting ? 'Submitting...' : (modalMode === 'review' ? 'Submit Review' : 'Publish Post')}
+                  <span className="relative z-10">
+                    {submitting ? 'SUBMITTING...' : (modalMode === 'review' ? 'SUBMIT REVIEW' : 'PUBLISH POST')}
+                  </span>
+                  {!submitting && <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />}
                 </button>
 
                 <p className="font-body text-[10px] text-white/20 text-center mt-4 font-light">

@@ -136,8 +136,11 @@ export default function Collection() {
                 </h3>
                 <div className="flex items-center justify-between">
                   <span className="font-body text-cream/60 text-sm font-light">{piece.price}</span>
-                  <button className="text-xs tracking-[0.2em] uppercase font-body text-gold border border-gold/30 px-4 py-2 hover:bg-gold hover:text-bg transition-all duration-300 opacity-0 group-hover:opacity-100">
-                    View
+                  <button
+                    className="relative inline-flex items-center justify-center bg-[var(--red)] text-white font-display text-sm tracking-[0.15em] uppercase px-5 py-2.5 rounded overflow-hidden group transition-all duration-300 hover:shadow-[0_8px_20px_rgba(229,33,43,0.5)] hover:-translate-y-1 opacity-0 group-hover:opacity-100"
+                  >
+                    <span className="relative z-10">VIEW</span>
+                    <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />
                   </button>
                 </div>
               </div>
@@ -147,8 +150,16 @@ export default function Collection() {
       </div>
 
       <div className="mt-16 flex justify-center">
-        <button className="font-body text-xs tracking-[0.3em] uppercase text-cream/60 border border-cream/20 px-10 py-4 hover:border-gold hover:text-gold transition-all duration-300">
-          View All Pieces
+        <button
+          className="relative inline-flex items-center justify-center gap-3 bg-[var(--red)] text-white font-display text-base md:text-lg tracking-[0.15em] uppercase px-12 py-4 rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1"
+        >
+          <span className="relative z-10 flex items-center gap-2">
+            VIEW ALL PIECES
+            <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </span>
+          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
         </button>
       </div>
     </section>

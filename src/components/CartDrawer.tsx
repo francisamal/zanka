@@ -164,35 +164,37 @@ export default function CartDrawer() {
 
       {/* Cart Overlay Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md transition-opacity duration-500"
         onClick={() => setCartOpen(false)}
       />
 
       {/* Slide-out Drawer Panel */}
       <div
-        className="fixed top-0 right-0 z-50 h-full w-full sm:w-[480px] bg-[#0c0c0c] border-l border-white/10 shadow-2xl flex flex-col transition-transform duration-300 overflow-hidden"
+        className="fixed top-0 right-0 z-50 h-full w-full sm:w-[480px] flex flex-col transition-transform duration-500 overflow-hidden border-l border-white/5"
         style={{
-          boxShadow: '-10px 0 35px rgba(0, 0, 0, 0.9)'
+          background: 'rgba(10, 10, 10, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '-20px 0 50px rgba(0, 0, 0, 0.8)'
         }}
       >
         {/* Header */}
-        <div className="p-6 border-b border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-xl">🧦</span>
-            <h2 className="font-display text-2xl tracking-wider text-white">YOUR CART</h2>
+        <div className="p-6 md:p-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h2 className="font-display text-2xl tracking-[0.15em] text-white">YOUR CART</h2>
             {cartItems.length > 0 && (
-              <span className="font-body text-xs bg-red text-white px-2 py-0.5 rounded-full font-bold">
-                {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+              <span className="font-body text-xs bg-[var(--red)] text-white px-2.5 py-1 rounded-full font-bold shadow-[0_0_10px_rgba(229,33,43,0.4)]">
+                {cartItems.reduce((sum, item) => sum + item.quantity, 0)} items
               </span>
             )}
           </div>
           <button
-            className="text-white/60 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+            className="text-white/40 hover:text-white transition-all p-2 hover:bg-white/5 rounded-full hover:rotate-90"
             onClick={() => setCartOpen(false)}
             aria-label="Close cart"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -238,71 +240,82 @@ export default function CartDrawer() {
             </div>
           ) : cartItems.length === 0 ? (
             /* Empty State */
-            <div className="text-center py-16 space-y-4 flex flex-col items-center justify-center h-full">
-              <span className="text-5xl opacity-40">🛍️</span>
-              <p className="font-body text-white/50 text-sm tracking-wider uppercase">Your cart is empty</p>
+            <div className="text-center py-20 space-y-6 flex flex-col items-center justify-center h-full">
+              <div className="w-24 h-24 rounded-full border border-dashed border-white/10 flex items-center justify-center bg-white/[0.02]">
+                <span className="text-4xl opacity-50">🛍️</span>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-display text-xl tracking-wider text-white">CART IS EMPTY</h3>
+                <p className="font-body text-white/40 text-sm font-light">Looks like you haven't added anything yet.</p>
+              </div>
               <button
-                className="font-body text-xs text-white/90 hover:text-white border border-white/20 hover:border-white px-6 py-2.5 rounded-full transition-all duration-300"
+                className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase px-10 py-4 rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1 mt-4"
                 onClick={() => setCartOpen(false)}
               >
-                Browse Products
+                <span className="relative z-10 flex items-center gap-2">
+                  START SHOPPING
+                  <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               </button>
             </div>
           ) : (
             /* Items List */
-            <div className="space-y-4">
+            <div className="space-y-6 px-2">
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex gap-4 p-3 bg-white/5 border border-white/5 hover:border-white/10 transition-all rounded"
+                  className="flex gap-5 p-4 bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all rounded-2xl group shadow-lg"
                 >
-                  <div className="relative w-16 h-20 bg-neutral-900 overflow-hidden flex-shrink-0">
+                  <div className="relative w-20 h-24 bg-neutral-900 rounded-xl overflow-hidden flex-shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
-                      className="object-cover"
-                      sizes="64px"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      sizes="80px"
                     />
                   </div>
-                  <div className="flex-1 min-w-0 flex flex-col justify-between">
+                  <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
                     <div>
-                      <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-body text-sm font-medium text-white truncate">{item.name}</h4>
+                      <div className="flex items-start justify-between gap-3">
+                        <h4 className="font-body text-base font-medium text-white truncate pr-2">{item.name}</h4>
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="text-white/40 hover:text-red transition-colors"
+                          className="text-white/30 hover:text-red transition-colors mt-0.5"
                           aria-label="Remove item"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
                       </div>
-                      <span className="font-body text-[9px] tracking-widest text-red uppercase font-semibold">
+                      <span className="inline-block mt-1.5 font-body text-[10px] tracking-widest text-red uppercase px-2 py-0.5 bg-red/10 rounded-full font-semibold border border-red/20">
                         {item.tag}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1">
-                      <div className="flex items-center border border-white/10 rounded overflow-hidden">
+                    <div className="flex items-end justify-between mt-4">
+                      <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-full overflow-hidden p-0.5">
                         <button
-                          className="px-2.5 py-1 text-white/60 hover:text-white hover:bg-white/5 transition-colors font-semibold"
+                          className="w-7 h-7 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors rounded-full"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         >
                           -
                         </button>
-                        <span className="px-3 py-1 font-body text-xs font-medium text-white bg-white/5">
+                        <span className="w-8 text-center font-body text-sm font-medium text-white">
                           {item.quantity}
                         </span>
                         <button
-                          className="px-2.5 py-1 text-white/60 hover:text-white hover:bg-white/5 transition-colors font-semibold"
+                          className="w-7 h-7 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors rounded-full"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         >
                           +
                         </button>
                       </div>
-                      <span className="font-body text-sm font-semibold text-white">
+                      <span className="font-body text-lg font-medium text-white tracking-wide">
                         ₹{item.priceNumber * item.quantity}
                       </span>
                     </div>
@@ -315,93 +328,97 @@ export default function CartDrawer() {
 
         {/* Footer Panel - Sign In or Checkout */}
         {!placedOrder && cartItems.length > 0 && (
-          <div className="p-6 border-t border-white/10 bg-[#070707] space-y-4">
-            <div className="flex justify-between items-end">
-              <span className="font-body text-xs tracking-wider text-white/60 uppercase">Subtotal</span>
-              <span className="font-body text-xl font-bold text-red">₹{calculateSubtotal()}</span>
+          <div className="p-6 md:p-8 bg-black/40 border-t border-white/5 backdrop-blur-xl space-y-6">
+            <div className="flex justify-between items-end mb-2">
+              <span className="font-body text-sm tracking-widest text-white/50 uppercase">Subtotal</span>
+              <span className="font-display text-2xl tracking-wide text-white">₹{calculateSubtotal()}</span>
             </div>
 
             {/* Check Customer Authenticated State */}
             {!customer ? (
               /* Simple Sign-in / Registration Form */
-              <form onSubmit={handleSignIn} className="space-y-3 pt-3 border-t border-white/5">
-                <p className="font-body text-[11px] tracking-wider text-white/50 leading-relaxed uppercase">
-                  Please sign in to proceed to checkout
+              <form onSubmit={handleSignIn} className="space-y-4 pt-4 border-t border-white/5">
+                <p className="font-body text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                  Sign in to checkout
                 </p>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <input
                     type="text"
                     placeholder="Full Name"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder-white/30 focus:border-red focus:outline-none transition-colors"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                   <input
                     type="email"
                     placeholder="Email Address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder-white/30 focus:border-red focus:outline-none transition-colors"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                   <input
                     type="tel"
                     placeholder="Mobile Number"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder-white/30 focus:border-red focus:outline-none transition-colors"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                 </div>
 
                 {signInError && (
-                  <p className="text-red font-body text-xs leading-snug">{signInError}</p>
+                  <p className="text-red font-body text-xs mt-2 px-1">{signInError}</p>
                 )}
 
                 <button
                   type="submit"
                   disabled={signingIn}
-                  className="w-full font-body text-xs tracking-[0.2em] uppercase py-3 font-semibold transition-all duration-300 disabled:opacity-50"
-                  style={{ background: 'var(--red)', color: '#fff' }}
+                  className="relative w-full overflow-hidden mt-4 bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase py-4 rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] disabled:opacity-50 disabled:hover:shadow-none"
                 >
-                  {signingIn ? 'Saving Details...' : 'Sign In & Checkout'}
+                  <span className="relative z-10">
+                    {signingIn ? 'SAVING DETAILS...' : 'SIGN IN & CHECKOUT'}
+                  </span>
+                  {!signingIn && <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />}
                 </button>
               </form>
             ) : (
               /* Verified Checkout Section */
-              <div className="space-y-4 pt-3 border-t border-white/5">
-                <div className="flex items-start justify-between bg-white/5 rounded p-3 border border-white/5">
-                  <div className="font-body text-xs space-y-1">
-                    <p className="text-white/40 uppercase text-[10px] tracking-wider font-semibold">Logged In Customer</p>
-                    <p className="text-white font-medium">{customer.name}</p>
-                    <p className="text-white/60">{customer.email || 'No Email'} {customer.mobile ? `· ${customer.mobile}` : ''}</p>
+              <div className="space-y-5 pt-4 border-t border-white/5">
+                <div className="flex items-center justify-between bg-white/[0.03] rounded-xl p-4 border border-white/10">
+                  <div className="font-body space-y-1">
+                    <p className="text-white/40 uppercase text-[10px] tracking-widest font-semibold mb-2">Customer</p>
+                    <p className="text-white text-sm font-medium">{customer.name}</p>
+                    <p className="text-white/50 text-xs">{customer.email || 'No Email'} {customer.mobile ? `· ${customer.mobile}` : ''}</p>
                   </div>
                   <button
                     onClick={signOutCustomer}
-                    className="text-[10px] tracking-wider font-bold text-red uppercase hover:opacity-80 transition-opacity"
+                    className="text-[10px] tracking-widest font-bold text-white/40 uppercase hover:text-white transition-colors py-2 px-3 bg-white/5 rounded-lg hover:bg-white/10"
                   >
-                    Change
+                    Edit
                   </button>
                 </div>
 
                 {checkoutError && (
-                  <p className="text-red font-body text-xs leading-snug">{checkoutError}</p>
+                  <p className="text-red font-body text-xs px-1">{checkoutError}</p>
                 )}
 
                 <button
                   onClick={handleCheckout}
                   disabled={checkingOut}
-                  className="w-full font-body text-xs tracking-[0.2em] uppercase py-3.5 font-semibold transition-all duration-300 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
-                  style={{ background: 'var(--red)', color: '#fff' }}
+                  className="relative w-full overflow-hidden bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase py-4 rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] disabled:opacity-50 disabled:hover:shadow-none flex items-center justify-center gap-3"
                 >
-                  {checkingOut ? (
-                    <>
-                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      Processing Payment...
-                    </>
-                  ) : (
-                    'Place Order & Pay'
-                  )}
+                  <span className="relative z-10 flex items-center gap-2">
+                    {checkingOut ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                        PROCESSING PAYMENT...
+                      </>
+                    ) : (
+                      'PLACE ORDER & PAY'
+                    )}
+                  </span>
+                  {!checkingOut && <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />}
                 </button>
               </div>
             )}

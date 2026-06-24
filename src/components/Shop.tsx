@@ -245,11 +245,11 @@ export default function Shop() {
             <button
               key={cat.slug}
               onClick={() => setActiveTab(cat.slug)}
-              className="font-body text-xs tracking-[0.25em] uppercase px-6 py-2.5 transition-all duration-300 font-medium"
-              style={{
-                background: activeTab === cat.slug ? 'var(--red)' : 'transparent',
-                color: activeTab === cat.slug ? '#fff' : 'rgba(255,255,255,0.4)',
-              }}
+              className={`font-display text-sm md:text-base tracking-widest uppercase px-8 py-3 rounded-md transition-all duration-300 border-2 ${
+                activeTab === cat.slug 
+                  ? 'border-[var(--red)] bg-[var(--red)] text-white shadow-[0_5px_20px_rgba(229,33,43,0.4)]' 
+                  : 'border-white/10 text-white/50 hover:border-white/30 hover:text-white'
+              }`}
             >
               {getCategoryIcon(cat.slug)}{cat.name}
             </button>
@@ -289,10 +289,15 @@ export default function Shop() {
                     addToCart(product)
                     setCartOpen(true)
                   }}
-                  className="w-full font-body text-xs tracking-[0.2em] uppercase py-2.5 font-medium transition-all duration-300 hover:opacity-80 cursor-pointer"
-                  style={{ background: 'var(--red)', color: '#fff' }}
+                  className="w-full relative overflow-hidden bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase py-3.5 rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)]"
                 >
-                  Add to Cart
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    ADD TO CART
+                    <svg className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </span>
+                  <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />
                 </button>
               </div>
             </div>
