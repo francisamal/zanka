@@ -1,5 +1,6 @@
 import { withSupabase } from '@supabase/server'
 import crypto from 'crypto'
+import { sendOrderEmails } from '../../../../utils/email'
 
 export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
@@ -31,6 +32,13 @@ export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
         .eq('id', orderId)
 
       if (error) throw error
+
+      // Trigger email notifications via Amazon SES
+      try {
+        await sendOrderEmails(orderId)
+      } catch (emailError) {
+        console.error('Error triggering order emails:', emailError)
+      }
 
       return Response.json({ success: true, message: 'Payment verified successfully' })
     } else {
