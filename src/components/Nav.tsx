@@ -7,11 +7,13 @@ import CartDrawer from '@/components/CartDrawer'
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const { cartItems, setCartOpen } = useCart()
+  const { cartItems, setCartOpen, customer, signOutCustomer } = useCart()
+  const [mounted, setMounted] = useState(false)
 
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
   useEffect(() => {
+    setMounted(true)
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -65,6 +67,25 @@ export default function Nav() {
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-3">
+            {/* Customer Sign-In status */}
+            {mounted && customer && (
+              <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 hover:border-white/20 transition-all rounded-full pl-3 pr-2 py-1.5 font-body text-[10px] text-white">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] flex-shrink-0"></span>
+                <span className="tracking-widest uppercase font-medium max-w-[60px] md:max-w-[100px] truncate">
+                  {customer.name.split(' ')[0]}
+                </span>
+                <button
+                  onClick={signOutCustomer}
+                  className="text-white/40 hover:text-red transition-colors ml-0.5 p-0.5"
+                  title="Sign Out"
+                >
+                  <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
             {/* Cart Button */}
             <button
               onClick={() => setCartOpen(true)}
