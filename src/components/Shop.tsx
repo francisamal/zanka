@@ -274,7 +274,7 @@ export default function Shop() {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
-              <div className="absolute inset-0 transition-all duration-500" style={{ background: hoveredId === product.id ? 'rgba(8,8,8,0.5)' : 'rgba(8,8,8,0.1)' }} />
+              <div className="absolute inset-0 transition-all duration-500 bg-black/20 md:bg-black/10 md:group-hover:bg-black/50" />
 
               <div className="absolute top-3 left-3">
                 <span className="font-body text-[10px] tracking-[0.2em] uppercase px-2 py-1" style={{ background: 'var(--red)', color: '#fff', fontSize: 10 }}>
@@ -282,18 +282,18 @@ export default function Shop() {
                 </span>
               </div>
 
-              <div className={`absolute inset-x-0 bottom-0 p-4 transition-all duration-500 ${hoveredId === product.id ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                <p className="font-body text-white/60 text-xs leading-relaxed font-light mb-3">{product.desc}</p>
+              <div className="absolute inset-x-0 bottom-0 p-2 md:p-4 transition-all duration-500 translate-y-0 opacity-100 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
+                <p className="hidden md:block font-body text-white/60 text-xs leading-relaxed font-light mb-3">{product.desc}</p>
                 <button
                   onClick={() => {
                     addToCart(product)
                     setCartOpen(true)
                   }}
-                  className="w-full relative overflow-hidden bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase py-3.5 rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)]"
+                  className="w-full relative overflow-hidden bg-[var(--red)] text-white font-display text-[10px] md:text-sm tracking-wider md:tracking-[0.15em] uppercase py-2 md:py-3.5 rounded md:rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)]"
                 >
-                  <span className="relative z-10 flex items-center justify-center gap-2">
+                  <span className="relative z-10 flex items-center justify-center gap-1.5 md:gap-2">
                     ADD TO CART
-                    <svg className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 md:w-5 md:h-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </span>

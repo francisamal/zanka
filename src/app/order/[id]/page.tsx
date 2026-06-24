@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import Nav from '@/components/Nav'
 import Cursor from '@/components/Cursor'
 
 interface OrderDetail {
@@ -51,10 +50,9 @@ export default function OrderReceiptPage() {
 
   if (loading) {
     return (
-      <main className="bg-bg text-cream min-h-screen">
+      <main className="bg-bg text-cream min-h-screen flex flex-col items-center relative">
         <Cursor />
-        <Nav />
-        <div className="pt-32 px-6 flex justify-center items-center min-h-[60vh]">
+        <div className="w-full max-w-4xl px-6 pt-[20px] flex justify-center items-center min-h-[60vh]">
           <div className="animate-spin w-8 h-8 border-2 border-white/20 border-t-red rounded-full"></div>
         </div>
       </main>
@@ -63,10 +61,9 @@ export default function OrderReceiptPage() {
 
   if (error || !order) {
     return (
-      <main className="bg-bg text-cream min-h-screen">
+      <main className="bg-bg text-cream min-h-screen flex flex-col items-center relative">
         <Cursor />
-        <Nav />
-        <div className="pt-32 px-6 flex flex-col justify-center items-center text-center min-h-[60vh]">
+        <div className="w-full max-w-4xl px-6 pt-[20px] flex flex-col justify-center items-center text-center min-h-[60vh]">
           <h1 className="font-display text-4xl mb-4 text-white">Order Not Found</h1>
           <p className="font-body text-white/50 mb-8">{error || "We couldn't locate this order."}</p>
           <a href="/" className="font-body text-xs tracking-widest uppercase bg-[var(--red)] text-white px-8 py-3 rounded hover:opacity-80 transition">
@@ -78,10 +75,9 @@ export default function OrderReceiptPage() {
   }
 
   return (
-    <main className="bg-bg text-cream min-h-screen">
+    <main className="bg-bg text-cream min-h-screen flex flex-col items-center relative">
       <Cursor />
-      <Nav />
-      <div className="pt-32 px-6 md:px-16 max-w-4xl mx-auto pb-24">
+      <div className="w-full max-w-4xl px-6 md:px-16 pt-[20px] pb-24">
         <div className="text-center mb-12">
           <h1 className="font-display text-4xl md:text-5xl text-white mb-4 tracking-widest uppercase">Order Receipt</h1>
           <p className="font-body text-white/50 tracking-widest text-xs uppercase">#{order.id}</p>

@@ -3,7 +3,7 @@ import Razorpay from 'razorpay'
 
 export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
-    const { customerId, items, shippingAddress, pincode } = await req.json()
+    const { customerId, items, shippingAddress, pincode, comments } = await req.json()
 
     if (!customerId) {
       return Response.json({ error: 'Customer ID is required' }, { status: 400 })
@@ -49,7 +49,8 @@ export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
         amount: totalAmount,
         status: 'pending',
         shipping_address: shippingAddress || null,
-        pincode: pincode || null
+        pincode: pincode || null,
+        comments: comments || null
       }])
       .select()
       .single()

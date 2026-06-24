@@ -737,7 +737,7 @@ export default function Feeds() {
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     placeholder="e.g., Priya M."
-                    className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300 focus:border-red/40"
+                    className="w-full font-body text-base md:text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300 focus:border-red/40"
                     style={{
                       background: 'rgba(255,255,255,0.04)',
                       border: '1px solid rgba(255,255,255,0.08)',
@@ -770,7 +770,7 @@ export default function Feeds() {
                     onChange={(e) => setFormText(e.target.value)}
                     placeholder={modalMode === 'review' ? 'Tell us about your experience...' : 'Share your style story...'}
                     rows={4}
-                    className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300 focus:border-red/40 resize-none"
+                    className="w-full font-body text-base md:text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300 focus:border-red/40 resize-none"
                     style={{
                       background: 'rgba(255,255,255,0.04)',
                       border: '1px solid rgba(255,255,255,0.08)',
@@ -790,7 +790,7 @@ export default function Feeds() {
                       value={formProduct}
                       onChange={(e) => setFormProduct(e.target.value)}
                       placeholder="e.g., Floral Summer Dress"
-                      className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
+                      className="w-full font-body text-base md:text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
                       style={{
                         background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.08)',
@@ -811,7 +811,7 @@ export default function Feeds() {
                       value={formHandle}
                       onChange={(e) => setFormHandle(e.target.value)}
                       placeholder="e.g., @your.handle"
-                      className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
+                      className="w-full font-body text-base md:text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
                       style={{
                         background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.08)',
@@ -831,7 +831,7 @@ export default function Feeds() {
                     value={formImageUrl}
                     onChange={(e) => setFormImageUrl(e.target.value)}
                     placeholder="Paste an image link..."
-                    className="w-full font-body text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
+                    className="w-full font-body text-base md:text-sm text-white placeholder-white/20 py-3 px-4 outline-none transition-all duration-300"
                     style={{
                       background: 'rgba(255,255,255,0.04)',
                       border: '1px solid rgba(255,255,255,0.08)',

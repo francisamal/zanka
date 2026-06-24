@@ -255,7 +255,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative w-full min-h-screen lg:h-screen flex items-center justify-center py-20 pb-36 lg:py-0 overflow-visible lg:overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
       <div
@@ -276,7 +276,7 @@ export default function Hero() {
           >
             <div
               style={{
-                width: 'clamp(280px, 48vw, 720px)',
+                width: 'clamp(220px, 48vw, 720px)',
                 filter: 'drop-shadow(0 0 90px rgba(229,33,43,0.3)) drop-shadow(0 4px 50px rgba(0,0,0,0.5))',
               }}
             >
@@ -395,11 +395,8 @@ export default function Hero() {
           className="relative inline-flex items-center justify-center px-12 py-5 font-display text-xl md:text-2xl tracking-[0.2em] uppercase text-white bg-[var(--red)] rounded-md overflow-hidden group transition-all duration-500 hover:shadow-[0_10px_40px_rgba(229,33,43,0.6)]"
           style={{ opacity: 0 }}
         >
-          <span className="relative z-10 flex items-center gap-4">
+          <span className="relative z-10">
             SHOP NOW
-            <svg className="w-6 h-6 transition-transform duration-500 group-hover:translate-x-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
           </span>
           <div className="absolute inset-0 bg-white/20 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
         </a>

@@ -64,8 +64,8 @@ export default function Cursor() {
 
   return (
     <>
-      <div ref={dotRef} className="fixed w-2 h-2 rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2" style={{ background: 'var(--red)' }} />
-      <div ref={ringRef} className="fixed w-8 h-8 rounded-full pointer-events-none z-[9998] -translate-x-1/2 -translate-y-1/2 transition-transform duration-300" style={{ border: '1px solid rgba(229,33,43,0.5)' }} />
+      <div ref={dotRef} className="hidden md:block fixed w-2 h-2 rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2" style={{ background: 'var(--red)' }} />
+      <div ref={ringRef} className="hidden md:block fixed w-8 h-8 rounded-full pointer-events-none z-[9998] -translate-x-1/2 -translate-y-1/2 transition-transform duration-300" style={{ border: '1px solid rgba(229,33,43,0.5)' }} />
     </>
   )
 }

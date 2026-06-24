@@ -24,7 +24,7 @@ async function run() {
   const { error: e1 } = await supabase.rpc('exec_sql', { query: sql1 });
   console.log('customers alter:', e1 ? e1.message : 'success');
 
-  const sql2 = `ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address TEXT; ALTER TABLE orders ADD COLUMN IF NOT EXISTS pincode TEXT;`;
+  const sql2 = `ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_address TEXT; ALTER TABLE orders ADD COLUMN IF NOT EXISTS pincode TEXT; ALTER TABLE orders ADD COLUMN IF NOT EXISTS comments TEXT;`;
   const { error: e2 } = await supabase.rpc('exec_sql', { query: sql2 });
   console.log('orders alter:', e2 ? e2.message : 'success');
 }

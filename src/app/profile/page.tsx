@@ -114,7 +114,7 @@ export default function ProfilePage() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -124,7 +124,7 @@ export default function ProfilePage() {
                     placeholder="e.g. john@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -134,7 +134,7 @@ export default function ProfilePage() {
                     placeholder="e.g. +91 98765 43210"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -145,7 +145,7 @@ export default function ProfilePage() {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     rows={2}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all resize-none"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all resize-none"
                   />
                 </div>
                 <div>
@@ -156,7 +156,7 @@ export default function ProfilePage() {
                     required
                     value={pincode}
                     onChange={(e) => setPincode(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/25 focus:border-[var(--red)] focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                 </div>
               </div>

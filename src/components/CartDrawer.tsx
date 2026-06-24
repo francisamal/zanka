@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Script from 'next/script'
 import { useCart, CartItem } from '@/utils/CartContext'
@@ -31,6 +31,22 @@ export default function CartDrawer() {
   const [checkingOut, setCheckingOut] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
   const [placedOrder, setPlacedOrder] = useState<any | null>(null)
+  const [comments, setComments] = useState('')
+
+  // Sync customer details when session changes
+  useEffect(() => {
+    if (customer) {
+      setAddress(customer.address || '')
+      setPincode(customer.pincode || '')
+    } else {
+      setName('')
+      setEmail('')
+      setMobile('')
+      setAddress('')
+      setPincode('')
+      setComments('')
+    }
+  }, [customer])
 
   if (!cartOpen) return null
 
@@ -53,7 +69,7 @@ export default function CartDrawer() {
 
     setSigningIn(true)
     try {
-      const res = await signInCustomer(name, email, mobile, address, pincode)
+      const res = await signInCustomer(name, email, mobile, '', '')
       if (!res) {
         setSignInError('Failed to sign in. Please try again.')
       }
@@ -64,7 +80,7 @@ export default function CartDrawer() {
     }
   }
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (finalAddress: string, finalPincode: string) => {
     if (!customer) return
     setCheckingOut(true)
     setCheckoutError('')
@@ -76,8 +92,9 @@ export default function CartDrawer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerId: customer.id,
-          shippingAddress: customer.address || '',
-          pincode: customer.pincode || '',
+          shippingAddress: finalAddress,
+          pincode: finalPincode,
+          comments: comments,
           items: cartItems.map(item => ({
             id: item.id,
             name: item.name,
@@ -134,7 +151,11 @@ export default function CartDrawer() {
                 orderId,
                 paymentId: paymentResponse.razorpay_payment_id,
                 amount: amount / 100,
-                customer: customer
+                customer: {
+                  ...customer,
+                  address: finalAddress,
+                  pincode: finalPincode
+                }
               })
               clearCart()
             } else {
@@ -158,6 +179,37 @@ export default function CartDrawer() {
 
     } catch (err: any) {
       setCheckoutError(err.message || 'Checkout failed. Please try again.')
+      setCheckingOut(false)
+    }
+  }
+
+  const onSubmitCheckout = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!customer) return
+
+    if (!address.trim()) {
+      setCheckoutError('Shipping Address is required.')
+      return
+    }
+    if (!pincode.trim()) {
+      setCheckoutError('Pincode is required.')
+      return
+    }
+
+    setCheckingOut(true)
+    try {
+      // Save updated customer details to database and React state
+      const updatedCust = await signInCustomer(customer.name, customer.email || '', customer.mobile || '', address, pincode)
+      if (!updatedCust) {
+        setCheckoutError('Failed to save address details. Please try again.')
+        setCheckingOut(false)
+        return
+      }
+
+      // Proceed to checkout
+      await handleCheckout(address, pincode)
+    } catch (err: any) {
+      setCheckoutError(err.message || 'An error occurred during checkout.')
       setCheckingOut(false)
     }
   }
@@ -353,37 +405,21 @@ export default function CartDrawer() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-base md:text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                   <input
                     type="email"
                     placeholder="Email Address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-base md:text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                   <input
                     type="tel"
                     placeholder="Mobile Number"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
-                  />
-                  <textarea
-                    placeholder="Shipping Address (Street, City, State)"
-                    required
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    rows={2}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all resize-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Pincode / Zip Code"
-                    required
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-base md:text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
                 </div>
 
@@ -397,32 +433,70 @@ export default function CartDrawer() {
                   className="relative w-full overflow-hidden mt-4 bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase py-4 rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] disabled:opacity-50 disabled:hover:shadow-none"
                 >
                   <span className="relative z-10">
-                    {signingIn ? 'SAVING DETAILS...' : 'SIGN IN & CHECKOUT'}
+                    {signingIn ? 'VERIFYING...' : 'CONTINUE TO SHIPPING'}
                   </span>
                   {!signingIn && <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCartOpen(false)}
+                  className="w-full text-center font-display text-sm tracking-[0.15em] uppercase text-white border border-white/15 hover:border-white/30 bg-white/[0.03] hover:bg-white/[0.08] py-4 rounded-md transition-all duration-300 font-medium cursor-pointer mt-3"
+                >
+                  ← Add More Products
                 </button>
               </form>
             ) : (
               /* Verified Checkout Section */
-              <div className="space-y-5 pt-4 border-t border-white/5">
+              <form onSubmit={onSubmitCheckout} className="space-y-5 pt-4 border-t border-white/5">
                 <div className="flex items-center justify-between bg-white/[0.03] rounded-xl p-4 border border-white/10">
                   <div className="font-body space-y-1">
-                    <p className="text-white/40 uppercase text-[10px] tracking-widest font-semibold mb-2">Customer</p>
+                    <p className="text-white/40 uppercase text-[10px] tracking-widest font-semibold mb-2">Customer Info</p>
                     <p className="text-white text-sm font-medium">{customer.name}</p>
-                    <p className="text-white/50 text-xs mb-2">{customer.email || 'No Email'} {customer.mobile ? `· ${customer.mobile}` : ''}</p>
-                    {customer.address && (
-                      <div className="pt-2 border-t border-white/10">
-                        <p className="text-white/40 uppercase text-[9px] tracking-widest font-semibold mb-1">Shipping To</p>
-                        <p className="text-white/80 text-xs leading-relaxed">{customer.address}<br/>{customer.pincode}</p>
-                      </div>
-                    )}
+                    <p className="text-white/50 text-xs">{customer.email || 'No Email'} {customer.mobile ? `· ${customer.mobile}` : ''}</p>
                   </div>
                   <button
+                    type="button"
                     onClick={signOutCustomer}
                     className="text-[10px] tracking-widest font-bold text-white/40 uppercase hover:text-white transition-colors py-2 px-3 bg-white/5 rounded-lg hover:bg-white/10"
                   >
-                    Edit
+                    Change Account
                   </button>
+                </div>
+
+                {/* Delivery details form */}
+                <div className="space-y-3 pt-2">
+                  <div>
+                    <label className="block text-[9px] text-white/40 tracking-widest uppercase mb-1 font-semibold">Shipping Address</label>
+                    <textarea
+                      placeholder="Street name, Apartment, City, State"
+                      required
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      rows={2}
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all resize-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] text-white/40 tracking-widest uppercase mb-1 font-semibold">Pincode / Zip Code</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 110001"
+                      required
+                      value={pincode}
+                      onChange={(e) => setPincode(e.target.value)}
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] text-white/40 tracking-widest uppercase mb-1 font-semibold">Order Comments / Delivery Notes</label>
+                    <textarea
+                      placeholder="Instructions for courier, gift notes, etc."
+                      value={comments}
+                      onChange={(e) => setComments(e.target.value)}
+                      rows={2}
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-base md:text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all resize-none"
+                    />
+                  </div>
                 </div>
 
                 {checkoutError && (
@@ -430,7 +504,7 @@ export default function CartDrawer() {
                 )}
 
                 <button
-                  onClick={handleCheckout}
+                  type="submit"
                   disabled={checkingOut}
                   className="relative w-full overflow-hidden bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase py-4 rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] disabled:opacity-50 disabled:hover:shadow-none flex items-center justify-center gap-3"
                 >
@@ -446,7 +520,14 @@ export default function CartDrawer() {
                   </span>
                   {!checkingOut && <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />}
                 </button>
-              </div>
+                <button
+                  type="button"
+                  onClick={() => setCartOpen(false)}
+                  className="w-full text-center font-display text-sm tracking-[0.15em] uppercase text-white border border-white/15 hover:border-white/30 bg-white/[0.03] hover:bg-white/[0.08] py-4 rounded-md transition-all duration-300 font-medium cursor-pointer mt-3"
+                >
+                  ← Add More Products
+                </button>
+              </form>
             )}
           </div>
         )}
