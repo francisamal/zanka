@@ -18,18 +18,21 @@ export interface Customer {
   name: string
   email: string
   mobile: string
+  address?: string
+  pincode?: string
 }
 
 interface CartContextType {
   cartItems: CartItem[]
   customer: Customer | null
   cartOpen: boolean
+  isLoaded: boolean
   setCartOpen: (open: boolean) => void
   addToCart: (product: any) => void
   removeFromCart: (productId: string) => void
   updateQuantity: (productId: string, quantity: number) => void
   clearCart: () => void
-  signInCustomer: (name: string, email: string, mobile: string) => Promise<Customer | null>
+  signInCustomer: (name: string, email: string, mobile: string, address: string, pincode: string) => Promise<Customer | null>
   signOutCustomer: () => void
 }
 
@@ -133,12 +136,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCartItems([])
   }
 
-  const signInCustomer = async (name: string, email: string, mobile: string): Promise<Customer | null> => {
+  const signInCustomer = async (name: string, email: string, mobile: string, address: string, pincode: string): Promise<Customer | null> => {
     try {
       const response = await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, mobile }),
+        body: JSON.stringify({ name, email, mobile, address, pincode }),
       })
 
       if (!response.ok) {
@@ -165,6 +168,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         cartItems,
         customer,
         cartOpen,
+        isLoaded,
         setCartOpen,
         addToCart,
         removeFromCart,

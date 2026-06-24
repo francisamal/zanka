@@ -166,6 +166,10 @@ export async function sendOrderEmails(orderId: string): Promise<boolean> {
               <p style="font-size: 16px; line-height: 1.6; color: #ddd; margin-top: 0;">Hey ${customer.name},</p>
               <p style="font-size: 14px; line-height: 1.6; color: #aaa;">Your order has been placed successfully. We are now processing your items and will notify you as soon as they are shipped.</p>
               
+              <div style="background-color: rgba(229,33,43,0.1); border: 1px solid rgba(229,33,43,0.3); border-radius: 4px; padding: 15px; margin: 20px 0; text-align: center;">
+                <p style="font-size: 14px; color: #fff; margin: 0; font-weight: bold;">Estimated Delivery: 6 to 7 Business Days</p>
+              </div>
+              
               <!-- Order Details Summary Block -->
               <div style="background-color: #111111; border: 1px solid #222; border-radius: 4px; padding: 20px; margin: 30px 0;">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" style="color: #ccc; font-size: 13px;">
@@ -209,6 +213,10 @@ export async function sendOrderEmails(orderId: string): Promise<boolean> {
                   </tr>
                 </tfoot>
               </table>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="https://zanka.shop/order/${orderId}" style="background-color: #e5212b; color: #ffffff; text-decoration: none; padding: 14px 35px; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 0.15em; display: inline-block; border-radius: 4px;">View Full Receipt & Order Status</a>
+              </div>
 
               <p style="font-size: 13px; line-height: 1.6; color: #888; margin-bottom: 0;">If you have any questions regarding your order, feel free to reply directly to this email or contact support at <a href="mailto:support@zanka.shop" style="color: #e5212b; text-decoration: none;">support@zanka.shop</a>.</p>
             </td>

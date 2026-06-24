@@ -22,6 +22,8 @@ export default function CartDrawer() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [mobile, setMobile] = useState('')
+  const [address, setAddress] = useState('')
+  const [pincode, setPincode] = useState('')
   const [signInError, setSignInError] = useState('')
   const [signingIn, setSigningIn] = useState(false)
 
@@ -51,7 +53,7 @@ export default function CartDrawer() {
 
     setSigningIn(true)
     try {
-      const res = await signInCustomer(name, email, mobile)
+      const res = await signInCustomer(name, email, mobile, address, pincode)
       if (!res) {
         setSignInError('Failed to sign in. Please try again.')
       }
@@ -74,6 +76,8 @@ export default function CartDrawer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerId: customer.id,
+          shippingAddress: customer.address || '',
+          pincode: customer.pincode || '',
           items: cartItems.map(item => ({
             id: item.id,
             name: item.name,
@@ -365,6 +369,22 @@ export default function CartDrawer() {
                     onChange={(e) => setMobile(e.target.value)}
                     className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
                   />
+                  <textarea
+                    placeholder="Shipping Address (Street, City, State)"
+                    required
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    rows={2}
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all resize-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Pincode / Zip Code"
+                    required
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value)}
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-white/30 focus:border-red focus:bg-white/[0.05] focus:outline-none transition-all"
+                  />
                 </div>
 
                 {signInError && (
@@ -389,7 +409,13 @@ export default function CartDrawer() {
                   <div className="font-body space-y-1">
                     <p className="text-white/40 uppercase text-[10px] tracking-widest font-semibold mb-2">Customer</p>
                     <p className="text-white text-sm font-medium">{customer.name}</p>
-                    <p className="text-white/50 text-xs">{customer.email || 'No Email'} {customer.mobile ? `· ${customer.mobile}` : ''}</p>
+                    <p className="text-white/50 text-xs mb-2">{customer.email || 'No Email'} {customer.mobile ? `· ${customer.mobile}` : ''}</p>
+                    {customer.address && (
+                      <div className="pt-2 border-t border-white/10">
+                        <p className="text-white/40 uppercase text-[9px] tracking-widest font-semibold mb-1">Shipping To</p>
+                        <p className="text-white/80 text-xs leading-relaxed">{customer.address}<br/>{customer.pincode}</p>
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={signOutCustomer}

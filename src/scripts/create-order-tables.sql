@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS customers (
   name TEXT NOT NULL,
   email TEXT,
   mobile TEXT,
+  address TEXT,
+  pincode TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -18,6 +20,8 @@ CREATE TABLE IF NOT EXISTS orders (
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
   status TEXT DEFAULT 'pending', -- 'pending', 'paid', 'failed'
   amount INTEGER NOT NULL, -- amount in INR (Rupees)
+  shipping_address TEXT,
+  pincode TEXT,
   razorpay_order_id TEXT UNIQUE,
   razorpay_payment_id TEXT,
   razorpay_signature TEXT,

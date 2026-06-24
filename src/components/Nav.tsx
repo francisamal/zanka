@@ -59,9 +59,9 @@ export default function Nav() {
             {mounted && customer && (
               <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 hover:border-white/20 transition-all rounded-full pl-3 pr-2 py-1.5 font-body text-[10px] text-white">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] flex-shrink-0"></span>
-                <span className="tracking-widest uppercase font-medium max-w-[60px] md:max-w-[100px] truncate">
+                <a href="/profile" className="tracking-widest uppercase font-medium max-w-[60px] md:max-w-[100px] truncate hover:text-[var(--red)] transition-colors" title="View Profile">
                   {customer.name.split(' ')[0]}
-                </span>
+                </a>
                 <button
                   onClick={signOutCustomer}
                   className="text-white/40 hover:text-red transition-colors ml-0.5 p-0.5"

@@ -2,7 +2,7 @@ import { withSupabase } from '@supabase/server'
 
 export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
   try {
-    const { name, email, mobile } = await req.json()
+    const { name, email, mobile, address, pincode } = await req.json()
     if (!name) {
       return Response.json({ error: 'Name is required' }, { status: 400 })
     }
@@ -45,6 +45,12 @@ export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
       if (mobile && existingCustomer.mobile !== mobile) {
         updateFields.mobile = mobile
       }
+      if (address && existingCustomer.address !== address) {
+        updateFields.address = address
+      }
+      if (pincode && existingCustomer.pincode !== pincode) {
+        updateFields.pincode = pincode
+      }
 
       if (Object.keys(updateFields).length > 0) {
         const { data, error } = await ctx.supabaseAdmin
@@ -62,7 +68,7 @@ export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
     // Create new customer
     const { data, error } = await ctx.supabaseAdmin
       .from('customers')
-      .insert([{ name, email: email || null, mobile: mobile || null }])
+      .insert([{ name, email: email || null, mobile: mobile || null, address: address || null, pincode: pincode || null }])
       .select()
       .single()
 

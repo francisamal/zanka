@@ -39,14 +39,27 @@ export default function Cursor() {
       requestAnimationFrame(animate)
     }
 
+    let isHovering = false
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const isInteractive = !!(target && target.closest('a, button, [role="button"], input, select, textarea, .cursor-pointer'))
+      if (isInteractive && !isHovering) {
+        isHovering = true
+        onEnter()
+      } else if (!isInteractive && isHovering) {
+        isHovering = false
+        onLeave()
+      }
+    }
+
     document.addEventListener('mousemove', onMove)
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', onEnter)
-      el.addEventListener('mouseleave', onLeave)
-    })
+    document.addEventListener('mouseover', onMouseOver)
     requestAnimationFrame(animate)
 
-    return () => document.removeEventListener('mousemove', onMove)
+    return () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseover', onMouseOver)
+    }
   }, [])
 
   return (

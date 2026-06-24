@@ -78,3 +78,13 @@ body {
 .animate-bounce-arrow {
   animation: bounceArrow 1.8s ease-in-out infinite;
 }
+
+.profile-page-main {
+  padding-top: 86px !important;
+}
+
+@media (min-width: 768px) {
+  .profile-page-main {
+    padding-top: 94px !important;
+  }
+}
