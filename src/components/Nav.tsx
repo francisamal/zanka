@@ -32,20 +32,8 @@ export default function Nav() {
             boxShadow: scrolled ? '0 10px 30px rgba(0, 0, 0, 0.5), 0 1px 15px rgba(229, 33, 43, 0.05)' : 'none',
           }}
         >
-          {/* Stylized text brand name on the left */}
-          <a
-            href="#"
-            className="select-none leading-none inline-block text-white transition-opacity duration-300 hover:opacity-80"
-            style={{
-              fontFamily: 'var(--font-brand), cursive',
-              fontSize: '1.4rem',
-              letterSpacing: '0.04em',
-              WebkitTextStroke: '0.3px rgba(229,33,43,0.5)',
-              textShadow: '0 0 10px rgba(229,33,43,0.2)',
-            }}
-          >
-            ZANKA
-          </a>
+          {/* Placeholder to keep center navigation aligned */}
+          <div className="w-[80px] hidden md:block" />
 
           {/* Centered navigation links */}
           <ul className="hidden md:flex items-center gap-8">
