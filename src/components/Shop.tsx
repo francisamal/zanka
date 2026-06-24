@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { useCart } from '@/utils/CartContext'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -13,7 +14,6 @@ const socks = [
     name: 'Pikachu Expression Socks',
     tag: 'Pokémon',
     price: '₹249',
-    usd: '$8.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.02 PM.jpeg',
     desc: 'All-over Pikachu happy faces on bright yellow. One size fits most.',
   },
@@ -22,7 +22,6 @@ const socks = [
     name: 'Pickle Rick Socks',
     tag: 'Rick & Morty',
     price: '₹249',
-    usd: '$8.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.02 PM (1).jpeg',
     desc: 'Bold Pickle Rick graphic on vibrant green. One size fits most.',
   },
@@ -31,7 +30,6 @@ const socks = [
     name: 'Hawaiian Rick Sanchez Socks',
     tag: 'Rick & Morty',
     price: '₹249',
-    usd: '$8.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.03 PM.jpeg',
     desc: 'Rick in a pink floral Hawaiian shirt. Light blue cuff, black base.',
   },
@@ -40,7 +38,6 @@ const socks = [
     name: 'Tony Tony Chopper Socks',
     tag: 'One Piece',
     price: '₹299',
-    usd: '$9.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.03 PM (2).jpeg',
     desc: 'Chopper in his signature pink hat & red cape on heather grey.',
   },
@@ -49,7 +46,6 @@ const socks = [
     name: 'Kuromi Neon Socks',
     tag: 'Sanrio',
     price: '₹299',
-    usd: '$9.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.05 PM.jpeg',
     desc: 'Kuromi with neon pink lettering & cosmic stars on black/purple.',
   },
@@ -58,7 +54,6 @@ const socks = [
     name: 'Venom Socks',
     tag: 'Marvel',
     price: '₹299',
-    usd: '$9.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.07 PM (1).jpeg',
     desc: 'Venom symbiote in blue & white on all-black. Dark and bold.',
   },
@@ -70,7 +65,6 @@ const tops = [
     name: 'White Ribbon-Tie Corset Top',
     tag: 'Corset',
     price: '₹999',
-    usd: '$29.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.06 PM (2).jpeg',
     desc: 'Structured crop top with oversized shoulder ribbon ties & corset seam paneling.',
   },
@@ -79,7 +73,6 @@ const tops = [
     name: 'Doodle Art Oversized Shirt',
     tag: 'Statement',
     price: '₹1,199',
-    usd: '$34.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.04 PM.jpeg',
     desc: 'All-over black & white comic doodle print. Characters, text, dual chest pockets.',
   },
@@ -88,7 +81,6 @@ const tops = [
     name: 'Asymmetrical Lace Mandala Shirt',
     tag: 'Artisan',
     price: '₹1,399',
-    usd: '$39.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.05 PM (1).jpeg',
     desc: 'White long-sleeve blouse with two large mandala lace appliques on the front.',
   },
@@ -97,7 +89,6 @@ const tops = [
     name: 'Caramel Leather Corset Top',
     tag: 'Corset',
     price: '₹999',
-    usd: '$29.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.05 PM (2).jpeg',
     desc: 'Strapless distressed faux-leather bustier in tan/caramel with hook-and-eye closure.',
   },
@@ -106,7 +97,6 @@ const tops = [
     name: 'Denim Zipper Corset Top',
     tag: 'Denim',
     price: '₹999',
-    usd: '$29.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.08 PM (1).jpeg',
     desc: 'Medium-wash denim bustier with front zip closure & structured panel stitching.',
   },
@@ -115,7 +105,6 @@ const tops = [
     name: 'Leopard Wide-Leg Trousers',
     tag: 'Bottoms',
     price: '₹799',
-    usd: '$24.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.06 PM.jpeg',
     desc: 'Classic animal print wide-leg trousers in black & beige. Bold statement bottom.',
   },
@@ -124,7 +113,6 @@ const tops = [
     name: 'Pastel Gingham Smocked Top',
     tag: 'Crop Top',
     price: '₹699',
-    usd: '$19.99',
     image: '/products/WhatsApp Image 2026-06-20 at 12.24.07 PM (2).jpeg',
     desc: 'Pink & purple gingham crop top with smocked bodice & adjustable straps.',
   },
@@ -149,6 +137,7 @@ interface DBCategory {
 }
 
 export default function Shop() {
+  const { addToCart, setCartOpen } = useCart()
   const [categories, setCategories] = useState<DBCategory[]>([
     { id: 'socks-fallback', name: 'Pop Culture Socks', slug: 'socks' },
     { id: 'tops-fallback', name: 'Statement Tops', slug: 'tops' }
@@ -176,11 +165,10 @@ export default function Shop() {
           }
           if (data.products && data.products.length > 0) {
             const mapped = data.products.map((p: DBProduct) => ({
-              id: p.id,
+              id: p.slug,
               name: p.name,
               tag: p.tag,
               price: `₹${p.price_inr}`,
-              usd: `$${p.price_usd}`,
               image: p.image_url,
               desc: p.description || '',
               categorySlug: data.categories.find((c: DBCategory) => c.id === p.category_id)?.slug || ''
@@ -296,7 +284,14 @@ export default function Shop() {
 
               <div className={`absolute inset-x-0 bottom-0 p-4 transition-all duration-500 ${hoveredId === product.id ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                 <p className="font-body text-white/60 text-xs leading-relaxed font-light mb-3">{product.desc}</p>
-                <button className="w-full font-body text-xs tracking-[0.2em] uppercase py-2.5 font-medium transition-all duration-300 hover:opacity-80" style={{ background: 'var(--red)', color: '#fff' }}>
+                <button
+                  onClick={() => {
+                    addToCart(product)
+                    setCartOpen(true)
+                  }}
+                  className="w-full font-body text-xs tracking-[0.2em] uppercase py-2.5 font-medium transition-all duration-300 hover:opacity-80 cursor-pointer"
+                  style={{ background: 'var(--red)', color: '#fff' }}
+                >
                   Add to Cart
                 </button>
               </div>
@@ -306,7 +301,6 @@ export default function Shop() {
               <h3 className="font-body text-sm text-white font-medium leading-snug mb-1">{product.name}</h3>
               <div className="flex items-center gap-2">
                 <span className="font-body text-base font-semibold" style={{ color: 'var(--red)' }}>{product.price}</span>
-                <span className="font-body text-xs text-white/30 font-light">{product.usd}</span>
               </div>
             </div>
           </div>

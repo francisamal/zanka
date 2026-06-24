@@ -136,7 +136,7 @@ function StarRating({ rating, interactive = false, onRate }: { rating: number; i
 function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="feed-card break-inside-avoid mb-6 md:mb-8 group relative overflow-hidden transition-all duration-500 hover:-translate-y-1"
+      className="feed-card w-full h-full break-inside-avoid mb-6 md:mb-8 group relative overflow-hidden p-6 md:p-8 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1"
       style={{
         background: 'linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))',
         border: '1px solid rgba(255,255,255,0.05)',
@@ -152,7 +152,7 @@ function ReviewCard({ review }: { review: Review }) {
         }}
       />
 
-      <div className="relative z-10 p-5 md:p-6 flex flex-col justify-between h-full">
+      <div className="relative z-10 flex flex-col justify-between flex-1">
         <div>
           <div className="flex items-start justify-between mb-5">
             <div className="flex items-center gap-3.5">
@@ -174,23 +174,23 @@ function ReviewCard({ review }: { review: Review }) {
             </div>
           </div>
 
-        <div className="mb-4">
-          <StarRating rating={review.rating} />
-        </div>
-
-        <p className="font-body text-[14px] text-white/80 font-light leading-relaxed mb-6">
-          &ldquo;{review.review_text}&rdquo;
-        </p>
-
-        {review.image_url && (
-          <div className="relative w-full overflow-hidden rounded-xl mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.3)]" style={{ aspectRatio: '4/5' }}>
-            <img
-              src={review.image_url}
-              alt={`Review by ${review.customer_name}`}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
+          <div className="mb-4">
+            <StarRating rating={review.rating} />
           </div>
-        )}
+
+          <p className="font-body text-[14px] text-white/80 font-light leading-relaxed mb-6">
+            &ldquo;{review.review_text}&rdquo;
+          </p>
+
+          {review.image_url && (
+            <div className="relative w-full overflow-hidden rounded-xl mb-6 shadow-[0_8px_30px_rgba(0,0,0,0.3)]" style={{ aspectRatio: '4/5' }}>
+              <img
+                src={review.image_url}
+                alt={`Review by ${review.customer_name}`}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+          )}
         </div>
 
         <div className="pt-5 border-t border-white/5 flex items-center justify-between mt-auto">
@@ -210,7 +210,7 @@ function ReviewCard({ review }: { review: Review }) {
 function PostCard({ post }: { post: CommunityPost }) {
   return (
     <div
-      className="feed-card break-inside-avoid mb-6 group relative p-5 md:p-6 transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between h-full"
+      className="feed-card w-full h-full break-inside-avoid mb-6 group relative p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
       style={{
         background: 'linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))',
         border: '1px solid rgba(255,255,255,0.05)',
@@ -226,7 +226,7 @@ function PostCard({ post }: { post: CommunityPost }) {
         }}
       />
 
-      <div className="relative z-10 flex flex-col flex-1">
+      <div className="relative z-10 flex flex-col justify-between flex-1">
         <div>
           <div className="flex items-center gap-3.5 mb-5">
             <div
@@ -251,12 +251,11 @@ function PostCard({ post }: { post: CommunityPost }) {
             {post.content}
           </p>
 
-        {post.image_url && (
-          <div className="relative w-full overflow-hidden rounded-xl mb-6 shadow-lg" style={{ aspectRatio: '4/5' }}>
-            <img src={post.image_url} alt="Community post" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-          </div>
-        )}
-
+          {post.image_url && (
+            <div className="relative w-full overflow-hidden rounded-xl mb-6 shadow-lg" style={{ aspectRatio: '4/5' }}>
+              <img src={post.image_url} alt="Community post" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/5">
@@ -281,7 +280,7 @@ function PostCard({ post }: { post: CommunityPost }) {
 function SkeletonCard() {
   return (
     <div
-      className="feed-card animate-pulse p-5 md:p-6 rounded-2xl border"
+      className="feed-card animate-pulse p-6 md:p-8 rounded-2xl border"
       style={{
         background: 'rgba(255,255,255,0.02)',
         borderColor: 'rgba(255,255,255,0.05)',

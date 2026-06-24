@@ -1,10 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useCart } from '@/utils/CartContext'
+import CartDrawer from '@/components/CartDrawer'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const { cartItems, setCartOpen } = useCart()
+
+  const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -37,6 +42,7 @@ export default function Nav() {
               textShadow: '0 0 10px rgba(229,33,43,0.2)',
             }}
           >
+            ZANKA
           </a>
 
           {/* Centered navigation links */}
@@ -57,27 +63,46 @@ export default function Nav() {
             ))}
           </ul>
 
-          {/* Instagram Connect button on the right */}
-          <div className="hidden md:block">
-            <a
-              href="https://www.instagram.com/wardrobeofzanka"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-body text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-white border px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/5"
-              style={{
-                borderColor: 'rgba(255, 255, 255, 0.15)',
-              }}
+          {/* Action buttons on the right */}
+          <div className="flex items-center gap-3">
+            {/* Cart Button */}
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative p-2.5 hover:bg-white/5 rounded-full transition-colors flex items-center justify-center text-white/80 hover:text-white border border-white/10 hover:border-white/20"
+              aria-label="View Cart"
             >
-              @wardrobeofzanka
-            </a>
-          </div>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red text-[8px] font-bold text-white">
+                  {cartItemsCount}
+                </span>
+              )}
+            </button>
 
-          {/* Mobile hamburger menu button */}
-          <button className="md:hidden flex flex-col gap-1.5 p-1" onClick={() => setMenuOpen(!menuOpen)}>
-            <span className={`block h-px w-5 bg-white transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`block h-px w-5 bg-white transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block h-px w-5 bg-white transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-          </button>
+            {/* Instagram Connect button (desktop only) */}
+            <div className="hidden md:block">
+              <a
+                href="https://www.instagram.com/wardrobeofzanka"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-body text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-white border px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/5"
+                style={{
+                  borderColor: 'rgba(255, 255, 255, 0.15)',
+                }}
+              >
+                @wardrobeofzanka
+              </a>
+            </div>
+
+            {/* Mobile hamburger menu button */}
+            <button className="md:hidden flex flex-col gap-1.5 p-1" onClick={() => setMenuOpen(!menuOpen)}>
+              <span className={`block h-px w-5 bg-white transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+              <span className={`block h-px w-5 bg-white transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+              <span className={`block h-px w-5 bg-white transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+            </button>
+          </div>
         </nav>
       </div>
 
@@ -102,6 +127,9 @@ export default function Nav() {
           ))}
         </ul>
       </div>
+
+      {/* Cart Side Drawer Panel */}
+      <CartDrawer />
     </>
   )
 }

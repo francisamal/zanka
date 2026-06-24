@@ -180,7 +180,7 @@ export default function AdminPage() {
   // Product Submit
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!prodName || !prodSlug || !prodPriceInr || !prodPriceUsd || !prodImageUrl) {
+    if (!prodName || !prodSlug || !prodPriceInr || !prodImageUrl) {
       showToast('Name, slug, price, and image are required', 'error')
       return
     }
@@ -191,7 +191,7 @@ export default function AdminPage() {
       slug: prodSlug,
       description: prodDesc,
       price_inr: parseFloat(prodPriceInr),
-      price_usd: parseFloat(prodPriceUsd),
+      price_usd: parseFloat(prodPriceInr) / 83, // Auto-calculated
       image_url: prodImageUrl,
       tag: prodTag,
       category_id: prodCategoryId || null,
@@ -456,7 +456,6 @@ export default function AdminPage() {
                                 <div className="flex items-end justify-between pt-4 border-t border-white/5">
                                   <div>
                                     <span className="font-body text-sm font-bold text-red-500">₹{p.price_inr}</span>
-                                    <span className="font-body text-[10px] text-white/30 ml-2">${p.price_usd}</span>
                                   </div>
                                 </div>
                               </div>
@@ -566,34 +565,18 @@ export default function AdminPage() {
                               />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <label className="block font-body text-[10px] tracking-[0.2em] uppercase text-white/50 mb-2">Price (INR)</label>
-                                <div className="relative">
-                                  <span className="absolute left-4 top-3 font-body text-sm text-white/40">₹</span>
-                                  <input 
-                                    type="number" 
-                                    step="1"
-                                    value={prodPriceInr}
-                                    onChange={(e) => setProdPriceInr(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 pl-8 pr-4 py-3 font-body text-sm text-white focus:outline-none focus:border-red-500 transition-colors"
-                                    placeholder="0"
-                                  />
-                                </div>
-                              </div>
-                              <div>
-                                <label className="block font-body text-[10px] tracking-[0.2em] uppercase text-white/50 mb-2">Price (USD)</label>
-                                <div className="relative">
-                                  <span className="absolute left-4 top-3 font-body text-sm text-white/40">$</span>
-                                  <input 
-                                    type="number" 
-                                    step="0.01"
-                                    value={prodPriceUsd}
-                                    onChange={(e) => setProdPriceUsd(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 pl-8 pr-4 py-3 font-body text-sm text-white focus:outline-none focus:border-red-500 transition-colors"
-                                    placeholder="0.00"
-                                  />
-                                </div>
+                            <div>
+                              <label className="block font-body text-[10px] tracking-[0.2em] uppercase text-white/50 mb-2">Price (INR)</label>
+                              <div className="relative">
+                                <span className="absolute left-4 top-3 font-body text-sm text-white/40">₹</span>
+                                <input 
+                                  type="number" 
+                                  step="1"
+                                  value={prodPriceInr}
+                                  onChange={(e) => setProdPriceInr(e.target.value)}
+                                  className="w-full bg-white/5 border border-white/10 pl-8 pr-4 py-3 font-body text-sm text-white focus:outline-none focus:border-red-500 transition-colors"
+                                  placeholder="0"
+                                />
                               </div>
                             </div>
 
