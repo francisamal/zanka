@@ -17,7 +17,7 @@ export default function AdminLayout({
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#030303] text-white selection:bg-[#e5212b] selection:text-white font-body cursor-default overflow-hidden">
+    <div className="min-h-screen w-full bg-[#080808] text-white selection:bg-[#e5212b] selection:text-white font-body cursor-default">
       {children}
     </div>
   )

@@ -126,8 +126,10 @@ interface DBProduct {
   price_inr: number
   price_usd: number
   image_url: string
+  images?: string[]
   tag: string
   category_id: string
+  is_sold_out?: boolean
 }
 
 interface DBCategory {
@@ -139,12 +141,13 @@ interface DBCategory {
 export default function Shop() {
   const { addToCart, setCartOpen } = useCart()
   const [categories, setCategories] = useState<DBCategory[]>([
-    { id: 'socks-fallback', name: 'Pop Culture Socks', slug: 'socks' },
-    { id: 'tops-fallback', name: 'Statement Tops', slug: 'tops' }
+    { id: 'tops-fallback', name: 'Statement Tops', slug: 'tops' },
+    { id: 'socks-fallback', name: 'Pop Culture Socks', slug: 'socks' }
   ])
   const [products, setProducts] = useState<any[]>([])
-  const [activeTab, setActiveTab] = useState<string>('socks')
+  const [activeTab, setActiveTab] = useState<string>('tops')
   const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [activeImageIndexes, setActiveImageIndexes] = useState<{ [key: string]: number }>({})
   const [loading, setLoading] = useState(true)
   const sectionRef = useRef<HTMLElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -156,11 +159,18 @@ export default function Shop() {
         if (res.ok) {
           const data = await res.json()
           if (data.categories && data.categories.length > 0) {
-            setCategories(data.categories)
-            if (data.categories.some((c: DBCategory) => c.slug === 'socks')) {
-              setActiveTab('socks')
+            const sortedCategories = [...data.categories].sort((a: DBCategory, b: DBCategory) => {
+              if (a.slug === 'tops') return -1
+              if (b.slug === 'tops') return 1
+              if (a.slug === 'socks') return 1
+              if (b.slug === 'socks') return -1
+              return 0
+            })
+            setCategories(sortedCategories)
+            if (sortedCategories.some((c: DBCategory) => c.slug === 'tops')) {
+              setActiveTab('tops')
             } else {
-              setActiveTab(data.categories[0].slug)
+              setActiveTab(sortedCategories[0].slug)
             }
           }
           if (data.products && data.products.length > 0) {
@@ -170,6 +180,8 @@ export default function Shop() {
               tag: p.tag,
               price: `₹${p.price_inr}`,
               image: p.image_url,
+              images: Array.isArray(p.images) && p.images.length > 0 ? p.images : (p.image_url ? [p.image_url] : []),
+              isSoldOut: Boolean(p.is_sold_out),
               desc: p.description || '',
               categorySlug: data.categories.find((c: DBCategory) => c.id === p.category_id)?.slug || ''
             }))
@@ -214,8 +226,8 @@ export default function Shop() {
 
   // Get categories emoji/icons mapping helper
   const getCategoryIcon = (slug: string) => {
-    if (slug === 'socks') return '🧦 '
     if (slug === 'tops') return '👚 '
+    if (slug === 'socks') return '🧦 '
     return '🛍️ '
   }
 
@@ -224,13 +236,14 @@ export default function Shop() {
   if (products.length > 0) {
     displayedProducts = products.filter(p => p.categorySlug === activeTab)
   } else {
-    displayedProducts = activeTab === 'socks' ? socks : (activeTab === 'tops' ? tops : [])
+    displayedProducts = activeTab === 'tops' ? tops : (activeTab === 'socks' ? socks : [])
   }
 
   return (
     <section ref={sectionRef} style={{ paddingTop: '3rem', paddingBottom: '3rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
-      <div id="socks" style={{ scrollMarginTop: '80px' }} />
+      <div id="shop" style={{ scrollMarginTop: '80px' }} />
       <div id="tops" style={{ scrollMarginTop: '80px' }} />
+      <div id="socks" style={{ scrollMarginTop: '80px' }} />
 
       <div className="section-title mb-14" style={{ opacity: 0 }}>
         <p className="font-body text-xs tracking-[0.4em] uppercase font-light mb-3" style={{ color: 'var(--red)' }}>
@@ -258,58 +271,168 @@ export default function Shop() {
       </div>
 
       <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {displayedProducts.map((product) => (
-          <div
-            key={product.id}
-            className="product-card group relative overflow-hidden"
-            style={{ opacity: 0 }}
-            onMouseEnter={() => setHoveredId(product.id)}
-            onMouseLeave={() => setHoveredId(null)}
-          >
-            <div className="relative overflow-hidden" style={{ aspectRatio: '3/4' }}>
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              />
-              <div className="absolute inset-0 transition-all duration-500 bg-black/20 md:bg-black/10 md:group-hover:bg-black/50" />
+        {displayedProducts.map((product) => {
+          // Parse images array robustly (handles arrays, JSON string, or Postgres string format)
+          let productImgs: string[] = []
+          if (Array.isArray(product.images) && product.images.length > 0) {
+            productImgs = product.images.filter((img: any) => typeof img === 'string' && img.trim().length > 0)
+          } else if (typeof product.images === 'string' && product.images.trim().length > 0) {
+            const raw = product.images.trim()
+            if (raw.startsWith('[') && raw.endsWith(']')) {
+              try {
+                const parsed = JSON.parse(raw)
+                if (Array.isArray(parsed)) productImgs = parsed.filter((i: any) => typeof i === 'string' && i.trim().length > 0)
+              } catch {}
+            } else if (raw.startsWith('{') && raw.endsWith('}')) {
+              productImgs = raw.substring(1, raw.length - 1).split(',').map((s: string) => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean)
+            }
+          }
+          if (productImgs.length === 0 && product.image) productImgs = [product.image]
 
-              <div className="absolute top-3 left-3">
-                <span className="font-body text-[10px] tracking-[0.2em] uppercase px-2 py-1" style={{ background: 'var(--red)', color: '#fff', fontSize: 10 }}>
-                  {product.tag}
-                </span>
-              </div>
+          const isHovered = hoveredId === product.id
+          const selectedImgIdx = activeImageIndexes[product.id] || 0
+          const displayImg = isHovered && productImgs.length > 1 && selectedImgIdx === 0 ? productImgs[1] : (productImgs[selectedImgIdx] || productImgs[0])
+          const isSoldOut = product.isSoldOut
 
-              <div className="absolute inset-x-0 bottom-0 p-2 md:p-4 transition-all duration-500 translate-y-0 opacity-100 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
-                <p className="hidden md:block font-body text-white/60 text-xs leading-relaxed font-light mb-3">{product.desc}</p>
-                <button
-                  onClick={() => {
-                    addToCart(product)
-                    setCartOpen(true)
-                  }}
-                  className="w-full relative overflow-hidden bg-[var(--red)] text-white font-display text-[10px] md:text-sm tracking-wider md:tracking-[0.15em] uppercase py-2 md:py-3.5 rounded md:rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)]"
-                >
-                  <span className="relative z-10 flex items-center justify-center gap-1.5 md:gap-2">
-                    ADD TO CART
-                    <svg className="w-3.5 h-3.5 md:w-5 md:h-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
+          const nextImg = (e: React.MouseEvent) => {
+            e.stopPropagation()
+            setActiveImageIndexes(prev => ({
+              ...prev,
+              [product.id]: ((prev[product.id] || 0) + 1) % productImgs.length
+            }))
+          }
+
+          const prevImg = (e: React.MouseEvent) => {
+            e.stopPropagation()
+            setActiveImageIndexes(prev => ({
+              ...prev,
+              [product.id]: ((prev[product.id] || 0) - 1 + productImgs.length) % productImgs.length
+            }))
+          }
+
+          return (
+            <div
+              key={product.id}
+              className={`product-card group relative overflow-hidden ${isSoldOut ? 'opacity-90' : ''}`}
+              style={{ opacity: 0 }}
+              onMouseEnter={() => setHoveredId(product.id)}
+              onMouseLeave={() => setHoveredId(null)}
+            >
+              <div className="relative overflow-hidden" style={{ aspectRatio: '3/4' }}>
+                <Image
+                  src={displayImg}
+                  alt={product.name}
+                  fill
+                  className={`object-cover transition-all duration-500 group-hover:scale-105 ${isSoldOut ? 'filter grayscale-[25%]' : ''}`}
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                />
+                <div className={`absolute inset-0 transition-all duration-500 ${isSoldOut ? 'bg-black/50' : 'bg-black/20 md:bg-black/10 md:group-hover:bg-black/40'}`} />
+
+                <div className="absolute top-3 left-3 flex flex-col gap-1 items-start z-10">
+                  <span className="font-body text-[10px] tracking-[0.2em] uppercase px-2 py-1" style={{ background: 'var(--red)', color: '#fff', fontSize: 10 }}>
+                    {product.tag}
                   </span>
-                  <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />
-                </button>
-              </div>
-            </div>
+                </div>
 
-            <div className="pt-3 pb-1">
-              <h3 className="font-body text-sm text-white font-medium leading-snug mb-1">{product.name}</h3>
-              <div className="flex items-center gap-2">
-                <span className="font-body text-base font-semibold" style={{ color: 'var(--red)' }}>{product.price}</span>
+                {isSoldOut ? (
+                  <div className="absolute top-3 right-3 bg-red-600 text-white font-display text-[10px] tracking-widest uppercase px-2.5 py-1 font-bold shadow-xl z-10 border border-white/20">
+                    SOLD OUT
+                  </div>
+                ) : productImgs.length > 1 && (
+                  <button
+                    onClick={nextImg}
+                    className="absolute top-3 right-3 bg-black/80 hover:bg-red-600 backdrop-blur-xs text-white text-[9px] font-body tracking-wider uppercase px-2.5 py-1 rounded-full border border-white/20 z-10 transition-colors cursor-pointer"
+                    title="Click to view next photo"
+                  >
+                    📷 {selectedImgIdx + 1}/{productImgs.length}
+                  </button>
+                )}
+
+                {/* Left/Right Carousel Controls */}
+                {productImgs.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImg}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-red-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all z-20 shadow-lg"
+                      title="Previous Image"
+                    >
+                      ❮
+                    </button>
+                    <button
+                      onClick={nextImg}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-red-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all z-20 shadow-lg"
+                      title="Next Image"
+                    >
+                      ❯
+                    </button>
+                  </>
+                )}
+
+                {/* Horizontal Dots bar */}
+                {productImgs.length > 1 && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-black/60 backdrop-blur-xs px-2 py-1 rounded-full border border-white/10 opacity-80 group-hover:opacity-100 transition-opacity">
+                    {productImgs.map((_: string, idx: number) => (
+                      <button
+                        key={idx}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setActiveImageIndexes(prev => ({ ...prev, [product.id]: idx }))
+                        }}
+                        className={`h-1.5 rounded-full transition-all ${
+                          selectedImgIdx === idx ? 'w-4 bg-[var(--red)]' : 'w-1.5 bg-white/40 hover:bg-white'
+                        }`}
+                        title={`View photo ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <div className="absolute inset-x-0 bottom-0 p-2 md:p-4 transition-all duration-500 translate-y-0 opacity-100 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 z-10">
+                  <p className="hidden md:block font-body text-white/60 text-xs leading-relaxed font-light mb-3">{product.desc}</p>
+                  
+                  {isSoldOut ? (
+                    <button
+                      disabled
+                      className="w-full bg-white/10 text-white/50 border border-white/10 font-display text-[10px] md:text-sm tracking-wider uppercase py-2 md:py-3.5 rounded md:rounded-md cursor-not-allowed"
+                    >
+                      OUT OF STOCK
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        addToCart(product)
+                        setCartOpen(true)
+                      }}
+                      className="w-full relative overflow-hidden bg-[var(--red)] text-white font-display text-[10px] md:text-sm tracking-wider md:tracking-[0.15em] uppercase py-2 md:py-3.5 rounded md:rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)]"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-1.5 md:gap-2">
+                        ADD TO CART
+                        <svg className="w-3.5 h-3.5 md:w-5 md:h-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                      </span>
+                      <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-3 pb-1 flex items-center justify-between">
+                <div>
+                  <h3 className="font-body text-sm text-white font-medium leading-snug mb-1">{product.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="font-body text-base font-semibold" style={{ color: 'var(--red)' }}>{product.price}</span>
+                  </div>
+                </div>
+                {isSoldOut && (
+                  <span className="font-body text-[9px] tracking-wider uppercase text-red-500 font-semibold border border-red-500/30 px-2 py-0.5 rounded-xs">
+                    Sold Out
+                  </span>
+                )}
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )

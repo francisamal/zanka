@@ -190,8 +190,8 @@ async function main() {
     const { data: catData, error: catErr } = await supabase
       .from('categories')
       .upsert([
-        { name: 'Pop Culture Socks', slug: 'socks' },
-        { name: 'Statement Tops', slug: 'tops' }
+        { name: 'Statement Tops', slug: 'tops' },
+        { name: 'Pop Culture Socks', slug: 'socks' }
       ], { onConflict: 'slug' })
       .select();
 
