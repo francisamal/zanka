@@ -70,8 +70,8 @@ export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
     if (itemsError) throw itemsError
 
     // 5. Create Razorpay order
-    const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_T5Qhc14XEsR02M'
-    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'VY7nUrmXth7MupdZzwKTsfa2'
+    const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_live_TMvQ6n9RqDdV8O'
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'hFv0NpoYQL3d3hC4WZ5ntibQ'
 
     const razorpay = new Razorpay({
       key_id: keyId,

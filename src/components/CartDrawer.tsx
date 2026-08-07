@@ -112,7 +112,7 @@ export default function CartDrawer() {
       const { orderId, razorpayOrderId, amount, currency } = orderData
 
       // 2. Open Razorpay Checkout Dialog
-      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_T5Qhc14XEsR02M'
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_live_TMvQ6n9RqDdV8O'
       
       const options = {
         key: keyId,

@@ -10,7 +10,7 @@ export const POST = withSupabase<any>({ auth: 'none' }, async (req, ctx) => {
       return Response.json({ error: 'All payment parameters are required' }, { status: 400 })
     }
 
-    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'VY7nUrmXth7MupdZzwKTsfa2'
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'hFv0NpoYQL3d3hC4WZ5ntibQ'
 
     // Verify signature signature = hmac_sha256(razorpay_order_id + "|" + razorpay_payment_id, secret)
     const expectedSignature = crypto
