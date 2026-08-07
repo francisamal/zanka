@@ -33,6 +33,20 @@ export default function AdminPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [productSearch, setProductSearch] = useState('')
+  const [productCategoryFilter, setProductCategoryFilter] = useState('all')
+  const [productStockFilter, setProductStockFilter] = useState('all')
+
+  const filteredProducts = products.filter((product) => {
+    const search = productSearch.trim().toLowerCase()
+    const matchesSearch = !search || [product.name, product.tag, product.description]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(search))
+    const matchesCategory = productCategoryFilter === 'all' || product.category_id === productCategoryFilter
+    // Stock is not part of the current product schema, so every catalog item is treated as in stock.
+    const matchesStock = productStockFilter === 'all' || productStockFilter === 'in-stock'
+    return matchesSearch && matchesCategory && matchesStock
+  })
 
   // Toast notification state
   const [toast, setToast] = useState<Toast | null>(null)
@@ -513,8 +527,8 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="h-screen w-full bg-[#030303] p-4 md:p-6 lg:p-8 xl:p-10 flex overflow-hidden">
-      <div className="flex flex-col md:flex-row flex-1 bg-[#0c0c0c] border border-white/10 rounded-[24px] overflow-hidden shadow-[0_0_80px_-10px_rgba(229,33,43,0.2)] relative h-full">
+    <div className="min-h-screen w-full bg-[#030303] p-3 sm:p-5 lg:p-8 flex overflow-hidden">
+      <div className="flex flex-col md:flex-row flex-1 max-w-[1600px] mx-auto bg-[#0c0c0c] border border-white/10 rounded-[24px] overflow-hidden shadow-[0_0_80px_-10px_rgba(229,33,43,0.2)] relative min-h-[calc(100vh-1.5rem)] sm:min-h-[calc(100vh-2.5rem)] lg:min-h-[calc(100vh-4rem)]">
       {/* Toast Overlay */}
       {toast && (
         <div 
@@ -555,7 +569,7 @@ export default function AdminPage() {
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-64 border-r border-white/10 p-6 xl:p-8 flex-col gap-10 shrink-0 h-full overflow-y-auto bg-[#070707] z-10 custom-scrollbar">
+      <aside className="hidden md:flex w-64 border-r border-white/10 !p-6 xl:!p-8 flex-col gap-10 shrink-0 h-full overflow-y-auto bg-[#070707] z-10 custom-scrollbar">
         <div>
           <span className="font-body text-[10px] tracking-[0.4em] uppercase font-light text-red-500 block mb-1">
             Control Panel
@@ -573,7 +587,7 @@ export default function AdminPage() {
               activeTab === 'products' ? 'bg-red-600 text-white font-bold' : 'text-white/50 hover:text-white hover:bg-white/5'
             }`}
           >
-            🧦 Products
+            Products
           </button>
           
           {/* Categories */}
@@ -583,7 +597,7 @@ export default function AdminPage() {
               activeTab === 'categories' ? 'bg-red-600 text-white font-bold' : 'text-white/50 hover:text-white hover:bg-white/5'
             }`}
           >
-            📂 Categories
+            Categories
           </button>
 
           {/* Orders (Placeholder) */}
@@ -593,7 +607,7 @@ export default function AdminPage() {
               activeTab === 'orders' ? 'bg-red-600 text-white font-bold' : 'text-white/50 hover:text-white hover:bg-white/5'
             }`}
           >
-            📦 Orders
+            Orders
           </button>
 
           {/* Settings (Placeholder) */}
@@ -603,7 +617,7 @@ export default function AdminPage() {
               activeTab === 'settings' ? 'bg-red-600 text-white font-bold' : 'text-white/50 hover:text-white hover:bg-white/5'
             }`}
           >
-            ⚙️ Settings
+            Settings
           </button>
         </nav>
 
@@ -616,7 +630,8 @@ export default function AdminPage() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-6 sm:p-8 md:p-12 lg:p-16 overflow-y-auto overflow-x-hidden bg-[#0c0c0c] h-full custom-scrollbar">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[#0c0c0c] h-full custom-scrollbar">
+        <div className="max-w-7xl mx-auto w-full !px-5 !py-6 sm:!px-8 sm:!py-8 lg:!px-10 lg:!py-10">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
             <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
@@ -629,17 +644,75 @@ export default function AdminPage() {
               <div className="animate-in fade-in duration-500">
                 {viewState === 'list' ? (
                   <>
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
-                      <div>
-                        <h2 className="font-display text-3xl md:text-4xl tracking-widest text-white uppercase mb-2">Product Catalog</h2>
-                        <p className="font-body text-xs text-white/50 tracking-wider">Manage your store inventory ({products.length} total)</p>
+                    <div className="flex flex-col gap-6 mb-8">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                        <div>
+                          <p className="font-body text-[10px] tracking-[0.3em] uppercase text-red-500 mb-2">Admin / Products</p>
+                          <h2 className="font-display text-3xl md:text-4xl tracking-widest text-white uppercase">Product Catalog</h2>
+                          <p className="font-body text-xs text-white/50 tracking-wider mt-2">Manage your store inventory with a focused catalog view.</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Link href="/" className="hidden sm:block font-body text-[10px] tracking-[0.16em] uppercase border border-white/15 px-4 py-3 text-white/60 hover:border-white/40 hover:text-white transition-colors">
+                            Live Storefront
+                          </Link>
+                          <button
+                            onClick={() => { resetProductForm(); setViewState('form'); }}
+                            className="bg-red-600 hover:bg-red-700 font-body text-xs tracking-[0.15em] uppercase font-bold py-3 px-5 text-white transition-colors rounded-sm"
+                          >
+                            + New Product
+                          </button>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => { resetProductForm(); setViewState('form'); }}
-                        className="bg-red-600 hover:bg-red-700 font-body text-sm md:text-base tracking-[0.15em] uppercase font-bold py-4 px-8 text-white transition-all shadow-lg hover:shadow-red-500/20 rounded-sm"
-                      >
-                        + Add New Product
-                      </button>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                        {[
+                          { label: 'Total Products', value: products.length },
+                          { label: 'In Stock', value: products.length },
+                          { label: 'Sold Out', value: 0 },
+                          { label: 'Active Categories', value: categories.length },
+                        ].map((stat) => (
+                          <div key={stat.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+                            <p className="font-body text-[9px] tracking-[0.18em] uppercase text-white/40">{stat.label}</p>
+                            <p className="font-display text-2xl sm:text-3xl tracking-wider text-white mt-1">{stat.value}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-col lg:flex-row gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
+                        <label className="relative flex-1 min-w-0">
+                          <span className="sr-only">Search products</span>
+                          <input
+                            type="search"
+                            value={productSearch}
+                            onChange={(event) => setProductSearch(event.target.value)}
+                            placeholder="Search products, tags, or descriptions"
+                            className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 font-body text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-red-500 transition-colors"
+                          />
+                        </label>
+                        <label className="lg:w-52">
+                          <span className="sr-only">Filter by category</span>
+                          <select
+                            value={productCategoryFilter}
+                            onChange={(event) => setProductCategoryFilter(event.target.value)}
+                            className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 font-body text-xs text-white focus:outline-none focus:border-red-500 transition-colors appearance-none"
+                          >
+                            <option value="all" className="bg-[#0c0c0c]">All Categories</option>
+                            {categories.map((category) => <option key={category.id} value={category.id} className="bg-[#0c0c0c]">{category.name}</option>)}
+                          </select>
+                        </label>
+                        <label className="lg:w-44">
+                          <span className="sr-only">Filter by stock status</span>
+                          <select
+                            value={productStockFilter}
+                            onChange={(event) => setProductStockFilter(event.target.value)}
+                            className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 font-body text-xs text-white focus:outline-none focus:border-red-500 transition-colors appearance-none"
+                          >
+                            <option value="all" className="bg-[#0c0c0c]">All Stock</option>
+                            <option value="in-stock" className="bg-[#0c0c0c]">In Stock</option>
+                            <option value="sold-out" className="bg-[#0c0c0c]">Sold Out</option>
+                          </select>
+                        </label>
+                      </div>
                     </div>
 
                     {products.length === 0 ? (
@@ -652,22 +725,26 @@ export default function AdminPage() {
                           Create your first product
                         </button>
                       </div>
+                    ) : filteredProducts.length === 0 ? (
+                      <div className="text-center py-24 border border-dashed border-white/10 bg-white/[0.02]">
+                        <p className="font-body text-xs tracking-[0.2em] uppercase text-white/40">No products match these filters.</p>
+                      </div>
                     ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {products.map(p => {
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
+                        {filteredProducts.map(p => {
                           const categoryName = categories.find(c => c.id === p.category_id)?.name || 'Uncategorized'
                           return (
-                            <div key={p.id} className="border border-white/10 bg-white/[0.02] group relative flex flex-col justify-between overflow-hidden">
-                              <div className="relative aspect-[3/4] overflow-hidden bg-black/30">
+                            <div key={p.id} className="border border-white/10 bg-white/[0.02] rounded-xl group relative flex flex-col justify-between overflow-hidden">
+                              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-t-xl bg-black/30">
                                 <Image 
                                   src={p.image_url} 
                                   alt={p.name} 
                                   fill 
                                   className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                  sizes="(max-width: 768px) 100vw, 30vw"
+                                  sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 20vw"
                                 />
-                                <div className="absolute top-3 left-3">
-                                  <span className="bg-red-600 text-white font-body text-[9px] tracking-widest uppercase px-2 py-1 font-semibold shadow-xl">
+                                <div className="absolute top-3 left-3 right-3 flex">
+                                  <span className="max-w-full truncate rounded-md bg-red-600 px-2 py-1 font-body text-[8px] tracking-widest uppercase font-semibold shadow-xl">
                                     {p.tag || 'No Tag'}
                                   </span>
                                 </div>
@@ -688,7 +765,7 @@ export default function AdminPage() {
                                 </div>
                               </div>
 
-                              <div className="p-5 flex-1 flex flex-col justify-between">
+                              <div className="p-4 flex-1 flex flex-col justify-between">
                                 <div>
                                   <p className="font-body text-[9px] tracking-[0.2em] text-white/40 uppercase mb-1">{categoryName}</p>
                                   <h3 className="font-body text-sm font-semibold text-white mb-2 line-clamp-1">{p.name}</h3>
@@ -1504,6 +1581,7 @@ export default function AdminPage() {
             )}
           </>
         )}
+        </div>
       </main>
       </div>
     </div>
