@@ -135,18 +135,18 @@ export default function Hero() {
       for (let x = 0; x < columns; x++) {
         for (let y = 0; y < rows; y++) {
           const i = x * rows + y
-          
+
           // Coordinate-based wave propagation
           const xAngle = (x * 0.12) + elapsed * 1.6
           const yAngle = (y * 0.15) + elapsed * 1.3
-          
+
           // Smooth mathematical waving
           let z = Math.sin(xAngle) * 0.45 + Math.cos(yAngle) * 0.35
 
           // Reactive mouse ripple attraction/repulsion
           const px = pos[i * 3]
           const py = pos[i * 3 + 1]
-          
+
           // Scale mouse position to screen grid coordinates
           const targetX = mouseX * 12
           const targetY = mouseY * 8
@@ -161,12 +161,12 @@ export default function Hero() {
         }
       }
       geo.attributes.position.needsUpdate = true
-      
+
       // Elegant, ambient drift rotation reacting to mouse coords
       particles.rotation.z = elapsed * 0.015
       particles.rotation.y = elapsed * 0.01 + mouseX * 0.25
       particles.rotation.x = -0.8 + mouseY * 0.2
-      
+
       renderer.render(scene, camera)
     }
     animate()
@@ -389,20 +389,20 @@ export default function Hero() {
         </div>
       </div>
 
-      <div ref={ctaRef} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+      <div ref={ctaRef} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20">
         <a
-          href="#socks"
-          className="relative inline-flex items-center justify-center px-12 py-5 font-display text-xl md:text-2xl tracking-[0.2em] uppercase text-white bg-[var(--red)] rounded-md overflow-hidden group transition-all duration-500 hover:shadow-[0_10px_40px_rgba(229,33,43,0.6)]"
-          style={{ opacity: 0 }}
+          href="#shop"
+          className="relative inline-flex items-center justify-center font-display text-xs md:text-sm tracking-widest uppercase text-white bg-[var(--red)] rounded-md overflow-hidden group transition-all duration-500 hover:shadow-[0_10px_40px_rgba(229,33,43,0.6)] cursor-pointer"
+          style={{ padding: '0.5rem 1.25rem', whiteSpace: 'nowrap' }}
         >
           <span className="relative z-10">
             SHOP NOW
           </span>
           <div className="absolute inset-0 bg-white/20 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
         </a>
-        <div className="animate-bounce-arrow" style={{ opacity: 0 }}>
+        <div className="animate-bounce-arrow">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 4v12M5 11l5 5 5-5" stroke="var(--red)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M10 4v12M5 11l5 5 5-5" stroke="var(--red)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </div>

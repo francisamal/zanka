@@ -148,6 +148,66 @@ export default function Shop() {
   const [activeTab, setActiveTab] = useState<string>('tops')
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [activeImageIndexes, setActiveImageIndexes] = useState<{ [key: string]: number }>({})
+  // Likes State & LocalStorage persistence + Real DB API tracking
+  const [likedProducts, setLikedProducts] = useState<{ [key: string]: boolean }>({})
+  const [likeCounts, setLikeCounts] = useState<{ [key: string]: number }>({})
+
+  useEffect(() => {
+    try {
+      const storedLikes = localStorage.getItem('zanka_liked_products')
+      if (storedLikes) {
+        setLikedProducts(JSON.parse(storedLikes))
+      }
+    } catch { }
+  }, [])
+
+  const getProductLikeCount = (productId: string) => {
+    if (likeCounts[productId] !== undefined) {
+      return likeCounts[productId]
+    }
+    return 0
+  }
+
+  const toggleLike = async (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation()
+    const currentlyLiked = Boolean(likedProducts[productId])
+    const newLikedState = !currentlyLiked
+
+    // Optimistically update local state & storage
+    setLikedProducts(prev => {
+      const updated = { ...prev, [productId]: newLikedState }
+      try {
+        localStorage.setItem('zanka_liked_products', JSON.stringify(updated))
+      } catch { }
+      return updated
+    })
+
+    setLikeCounts(prev => {
+      const currentCount = getProductLikeCount(productId)
+      return {
+        ...prev,
+        [productId]: newLikedState ? currentCount + 1 : Math.max(0, currentCount - 1)
+      }
+    })
+
+    // Call API to persist in database
+    try {
+      const res = await fetch('/api/products/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: productId, action: newLikedState ? 'like' : 'unlike' })
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (typeof data.likes === 'number') {
+          setLikeCounts(prev => ({ ...prev, [productId]: data.likes }))
+        }
+      }
+    } catch (err) {
+      console.error('Failed to sync product like count with DB:', err)
+    }
+  }
+
   const [loading, setLoading] = useState(true)
   const sectionRef = useRef<HTMLElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -174,7 +234,7 @@ export default function Shop() {
             }
           }
           if (data.products && data.products.length > 0) {
-            const mapped = data.products.map((p: DBProduct) => ({
+            const mapped = data.products.map((p: DBProduct & { likes?: number }) => ({
               id: p.slug,
               name: p.name,
               tag: p.tag,
@@ -183,9 +243,17 @@ export default function Shop() {
               images: Array.isArray(p.images) && p.images.length > 0 ? p.images : (p.image_url ? [p.image_url] : []),
               isSoldOut: Boolean(p.is_sold_out),
               desc: p.description || '',
-              categorySlug: data.categories.find((c: DBCategory) => c.id === p.category_id)?.slug || ''
+              categorySlug: data.categories.find((c: DBCategory) => c.id === p.category_id)?.slug || '',
+              likes: p.likes || 0
             }))
             setProducts(mapped)
+
+            // Populate like counts map from DB
+            const initialCounts: { [key: string]: number } = {}
+            mapped.forEach((p: any) => {
+              initialCounts[p.id] = p.likes || 0
+            })
+            setLikeCounts(prev => ({ ...initialCounts, ...prev }))
           }
         }
       } catch (err) {
@@ -231,6 +299,33 @@ export default function Shop() {
     return '🛍️ '
   }
 
+  // Helper for dynamic category badge colors
+  const getCategoryBadgeStyle = (tag: string) => {
+    const t = tag ? tag.toLowerCase() : ''
+    if (t.includes('denim')) {
+      return { background: '#00F0FF', color: '#0D0D11' } // Electric Cyan
+    }
+    if (t.includes('pokemon') || t.includes('pokémon')) {
+      return { background: '#FFE600', color: '#0D0D11' } // Electric Yellow
+    }
+    if (t.includes('rick') || t.includes('morty')) {
+      return { background: '#10B981', color: '#FFFFFF' } // Acid Green
+    }
+    if (t.includes('one piece')) {
+      return { background: '#FF5722', color: '#FFFFFF' } // Warm Coral
+    }
+    if (t.includes('sanrio')) {
+      return { background: '#EC4899', color: '#FFFFFF' } // Hot Pink
+    }
+    if (t.includes('marvel')) {
+      return { background: '#E11D48', color: '#FFFFFF' } // Crimson
+    }
+    if (t.includes('bottoms') || t.includes('trousers') || t.includes('pants')) {
+      return { background: '#7B2CBF', color: '#FFFFFF' } // Purple
+    }
+    return { background: '#FF007A', color: '#FFFFFF' } // Corset / Artisan / Pink Accent
+  }
+
   // Fallback filtering or dynamic filtering
   let displayedProducts = []
   if (products.length > 0) {
@@ -240,12 +335,12 @@ export default function Shop() {
   }
 
   return (
-    <section ref={sectionRef} style={{ paddingTop: '3rem', paddingBottom: '3rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
+    <section ref={sectionRef} style={{ background: '#0D0D11', paddingTop: '3rem', paddingBottom: '3rem', paddingLeft: 'clamp(1.5rem, 3vw, 6rem)', paddingRight: 'clamp(1.5rem, 3vw, 6rem)' }}>
       <div id="shop" style={{ scrollMarginTop: '80px' }} />
       <div id="tops" style={{ scrollMarginTop: '80px' }} />
       <div id="socks" style={{ scrollMarginTop: '80px' }} />
 
-      <div className="section-title mb-14" style={{ opacity: 0 }}>
+      <div className="section-title mb-14">
         <p className="font-body text-xs tracking-[0.4em] uppercase font-light mb-3" style={{ color: 'var(--red)' }}>
           The Shop
         </p>
@@ -253,18 +348,17 @@ export default function Shop() {
           SHOP NOW
         </h2>
 
-        <div className="mt-8 flex flex-wrap gap-1 p-1 w-fit" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2, marginBottom: '1.5rem' }}>
+        <div className="mt-8 flex flex-wrap gap-2 p-1.5 w-fit" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, marginBottom: '2rem' }}>
           {categories.map(cat => (
             <button
               key={cat.slug}
               onClick={() => setActiveTab(cat.slug)}
-              className={`font-display text-sm md:text-base tracking-widest uppercase px-8 py-3 rounded-md transition-all duration-300 border-2 ${
-                activeTab === cat.slug 
-                  ? 'border-[var(--red)] bg-[var(--red)] text-white shadow-[0_5px_20px_rgba(229,33,43,0.4)]' 
-                  : 'border-white/10 text-white/50 hover:border-white/30 hover:text-white'
-              }`}
+              className={`font-display text-xs tracking-widest uppercase px-4 md:px-5 py-2 rounded-md transition-all duration-300 border-2 cursor-pointer ${activeTab === cat.slug
+                  ? 'border-[var(--red)] bg-[var(--red)] text-white shadow-[0_5px_10px_rgba(229,33,43,0.3)]'
+                  : 'border-white/10 text-white/60 hover:border-white/30 hover:text-white'
+                }`}
             >
-              {getCategoryIcon(cat.slug)}{cat.name}
+              <span>{getCategoryIcon(cat.slug)}{cat.name}</span>
             </button>
           ))}
         </div>
@@ -282,7 +376,7 @@ export default function Shop() {
               try {
                 const parsed = JSON.parse(raw)
                 if (Array.isArray(parsed)) productImgs = parsed.filter((i: any) => typeof i === 'string' && i.trim().length > 0)
-              } catch {}
+              } catch { }
             } else if (raw.startsWith('{') && raw.endsWith('}')) {
               productImgs = raw.substring(1, raw.length - 1).split(',').map((s: string) => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean)
             }
@@ -293,6 +387,7 @@ export default function Shop() {
           const selectedImgIdx = activeImageIndexes[product.id] || 0
           const displayImg = isHovered && productImgs.length > 1 && selectedImgIdx === 0 ? productImgs[1] : (productImgs[selectedImgIdx] || productImgs[0])
           const isSoldOut = product.isSoldOut
+          const badgeStyle = getCategoryBadgeStyle(product.tag)
 
           const nextImg = (e: React.MouseEvent) => {
             e.stopPropagation()
@@ -313,35 +408,56 @@ export default function Shop() {
           return (
             <div
               key={product.id}
-              className={`product-card group relative overflow-hidden ${isSoldOut ? 'opacity-90' : ''}`}
-              style={{ opacity: 0 }}
+              className="product-card group relative flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:border-[#3A3B4C] h-full"
+              style={{ background: '#121217', border: '1px solid #2A2B36', borderRadius: '12px' }}
               onMouseEnter={() => setHoveredId(product.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              <div className="relative overflow-hidden" style={{ aspectRatio: '3/4' }}>
+              {/* Image Container with Top-Rounded Corners */}
+              <div className="relative w-full overflow-hidden rounded-t-[12px]" style={{ aspectRatio: '4/5' }}>
                 <Image
                   src={displayImg}
                   alt={product.name}
                   fill
-                  className={`object-cover transition-all duration-500 group-hover:scale-105 ${isSoldOut ? 'filter grayscale-[25%]' : ''}`}
+                  className={`object-cover transition-all duration-500 group-hover:scale-105 ${isSoldOut ? 'opacity-55 filter grayscale-[20%]' : ''}`}
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
-                <div className={`absolute inset-0 transition-all duration-500 ${isSoldOut ? 'bg-black/50' : 'bg-black/20 md:bg-black/10 md:group-hover:bg-black/40'}`} />
+                <div className={`absolute inset-0 transition-all duration-500 ${isSoldOut ? 'bg-black/40' : 'bg-black/10 md:group-hover:bg-black/20'}`} />
 
+                {/* Top Left Accent Pill Badge */}
                 <div className="absolute top-3 left-3 flex flex-col gap-1 items-start z-10">
-                  <span className="font-body text-[10px] tracking-[0.2em] uppercase px-2 py-1" style={{ background: 'var(--red)', color: '#fff', fontSize: 10 }}>
+                  <span
+                    className="font-body font-bold uppercase rounded-full shadow-md"
+                    style={{
+                      background: badgeStyle.background,
+                      color: badgeStyle.color,
+                      fontSize: '11px',
+                      letterSpacing: '0.05em',
+                      padding: '4px 10px'
+                    }}
+                  >
                     {product.tag}
                   </span>
                 </div>
 
+                {/* Sold Out or Multi-photo Tag */}
                 {isSoldOut ? (
-                  <div className="absolute top-3 right-3 bg-red-600 text-white font-display text-[10px] tracking-widest uppercase px-2.5 py-1 font-bold shadow-xl z-10 border border-white/20">
+                  <div
+                    className="absolute top-3 right-3 font-body font-bold uppercase rounded-full shadow-md z-10"
+                    style={{
+                      background: '#FF3333',
+                      color: '#FFFFFF',
+                      fontSize: '11px',
+                      letterSpacing: '0.05em',
+                      padding: '4px 10px'
+                    }}
+                  >
                     SOLD OUT
                   </div>
                 ) : productImgs.length > 1 && (
                   <button
                     onClick={nextImg}
-                    className="absolute top-3 right-3 bg-black/80 hover:bg-red-600 backdrop-blur-xs text-white text-[9px] font-body tracking-wider uppercase px-2.5 py-1 rounded-full border border-white/20 z-10 transition-colors cursor-pointer"
+                    className="absolute top-3 right-3 bg-black/80 hover:bg-[#FF007A] backdrop-blur-xs text-white text-[10px] font-body font-bold tracking-wider uppercase px-2.5 py-1 rounded-full border border-white/20 z-10 transition-colors cursor-pointer"
                     title="Click to view next photo"
                   >
                     📷 {selectedImgIdx + 1}/{productImgs.length}
@@ -353,14 +469,14 @@ export default function Shop() {
                   <>
                     <button
                       onClick={prevImg}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-red-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all z-20 shadow-lg"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-[#FF007A] text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all z-20 shadow-lg"
                       title="Previous Image"
                     >
                       ❮
                     </button>
                     <button
                       onClick={nextImg}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-red-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all z-20 shadow-lg"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-[#FF007A] text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all z-20 shadow-lg"
                       title="Next Image"
                     >
                       ❯
@@ -378,24 +494,66 @@ export default function Shop() {
                           e.stopPropagation()
                           setActiveImageIndexes(prev => ({ ...prev, [product.id]: idx }))
                         }}
-                        className={`h-1.5 rounded-full transition-all ${
-                          selectedImgIdx === idx ? 'w-4 bg-[var(--red)]' : 'w-1.5 bg-white/40 hover:bg-white'
-                        }`}
+                        className={`h-1.5 rounded-full transition-all ${selectedImgIdx === idx ? 'w-4 bg-[#FF007A]' : 'w-1.5 bg-white/40 hover:bg-white'
+                          }`}
                         title={`View photo ${idx + 1}`}
                       />
                     ))}
                   </div>
                 )}
+              </div>
 
-                <div className="absolute inset-x-0 bottom-0 p-2 md:p-4 transition-all duration-500 translate-y-0 opacity-100 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 z-10">
-                  <p className="hidden md:block font-body text-white/60 text-xs leading-relaxed font-light mb-3">{product.desc}</p>
-                  
+              {/* Card Body Content with Generous Side & Vertical Padding (20px / 1.25rem on all sides) */}
+              <div
+                className="flex flex-col justify-between flex-grow w-full"
+                style={{ padding: '1.25rem', gap: '1rem' }}
+              >
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-body text-xs md:text-sm text-white font-bold leading-snug uppercase tracking-wide line-clamp-2 min-h-[2.4rem]" title={product.name}>
+                    {product.name}
+                  </h3>
+                  {product.desc && (
+                    <p className="font-body text-white/60 text-[11px] md:text-xs line-clamp-2 leading-relaxed font-light">{product.desc}</p>
+                  )}
+
+                  {/* Price & Likes Row */}
+                  <div className="flex items-center justify-between pt-3 pb-1 border-t border-white/10 mt-1">
+                    <span className="font-body text-base md:text-[1.25rem] font-bold tracking-tight" style={{ color: '#FF5722' }}>
+                      {product.price}
+                    </span>
+
+                    {/* Interactive Product Likes (Borderless) */}
+                    <button
+                      onClick={(e) => toggleLike(e, product.id)}
+                      className="inline-flex items-center gap-1.5 border-0 bg-transparent p-0 shadow-none cursor-pointer outline-none group/heart"
+                      title={likedProducts[product.id] ? 'Unlike' : 'Like item'}
+                    >
+                      <svg
+                        className={`w-4 h-4 transition-transform duration-200 group-hover/heart:scale-110 ${likedProducts[product.id]
+                            ? 'fill-[#FF007A] stroke-[#FF007A]'
+                            : 'fill-none stroke-white/60 group-hover/heart:stroke-white'
+                          }`}
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      <span className={`font-body font-bold text-xs md:text-sm ${likedProducts[product.id] ? 'text-[#FF007A]' : 'text-white/70'}`}>
+                        {getProductLikeCount(product.id)}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Anchored CTA Button with Full Side Padding Breathing Space */}
+                <div className="w-full mt-auto pt-1">
                   {isSoldOut ? (
                     <button
                       disabled
-                      className="w-full bg-white/10 text-white/50 border border-white/10 font-display text-[10px] md:text-sm tracking-wider uppercase py-2 md:py-3.5 rounded md:rounded-md cursor-not-allowed"
+                      className="w-full font-body font-bold text-xs md:text-sm tracking-wider uppercase py-3 md:py-3.5 rounded-[10px] cursor-not-allowed shadow-sm border border-white/10 transition-all flex items-center justify-center gap-2"
+                      style={{ background: '#262626', color: '#777777' }}
                     >
-                      OUT OF STOCK
+                      <span>OUT OF STOCK</span>
                     </button>
                   ) : (
                     <button
@@ -403,32 +561,19 @@ export default function Shop() {
                         addToCart(product)
                         setCartOpen(true)
                       }}
-                      className="w-full relative overflow-hidden bg-[var(--red)] text-white font-display text-[10px] md:text-sm tracking-wider md:tracking-[0.15em] uppercase py-2 md:py-3.5 rounded md:rounded-md group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)]"
+                      className="w-full relative overflow-hidden text-white font-body font-bold text-xs md:text-sm tracking-wider uppercase py-3 md:py-3.5 rounded-[10px] group transition-all duration-300 hover:shadow-[0_4px_20px_rgba(255,0,122,0.5)] cursor-pointer flex items-center justify-center gap-2"
+                      style={{ background: 'linear-gradient(135deg, #FF007A, #7B2CBF)' }}
                     >
-                      <span className="relative z-10 flex items-center justify-center gap-1.5 md:gap-2">
+                      <span className="relative z-10 flex items-center justify-center gap-2">
                         ADD TO CART
-                        <svg className="w-3.5 h-3.5 md:w-5 md:h-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        <svg className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                         </svg>
                       </span>
                       <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />
                     </button>
                   )}
                 </div>
-              </div>
-
-              <div className="pt-3 pb-1 flex items-center justify-between">
-                <div>
-                  <h3 className="font-body text-sm text-white font-medium leading-snug mb-1">{product.name}</h3>
-                  <div className="flex items-center gap-2">
-                    <span className="font-body text-base font-semibold" style={{ color: 'var(--red)' }}>{product.price}</span>
-                  </div>
-                </div>
-                {isSoldOut && (
-                  <span className="font-body text-[9px] tracking-wider uppercase text-red-500 font-semibold border border-red-500/30 px-2 py-0.5 rounded-xs">
-                    Sold Out
-                  </span>
-                )}
               </div>
             </div>
           )

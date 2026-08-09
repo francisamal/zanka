@@ -281,13 +281,13 @@ export function ProductsTab({
 
                       {/* Content Info */}
                       <div className="p-5">
-                        <h3 className="font-display text-base font-bold text-white tracking-wide truncate mb-1" title={p.name}>
+                        <h3 className="font-display text-base font-bold text-white tracking-wide uppercase line-clamp-2 min-h-[2.5rem] mb-1" title={p.name}>
                           {p.name}
                         </h3>
                         <p className="font-mono text-[11px] text-white/40 truncate mb-3">
                           /{p.slug}
                         </p>
-                        <p className="font-body text-xs text-white/60 line-clamp-2 leading-relaxed mb-4">
+                        <p className="font-body text-xs text-white/60 line-clamp-2 leading-relaxed mb-2">
                           {p.description || 'No description provided.'}
                         </p>
                       </div>
@@ -298,7 +298,7 @@ export function ProductsTab({
                       <div className="flex items-center justify-between py-3">
                         <div>
                           <span className="font-body text-[10px] text-white/40 uppercase block leading-none mb-1">Price</span>
-                          <span className="font-display text-base font-bold text-white">
+                          <span className="font-display text-base font-bold text-[#FF5722]">
                             ₹{p.price_inr ? p.price_inr.toLocaleString('en-IN') : '0'}
                           </span>
                         </div>
@@ -310,19 +310,21 @@ export function ProductsTab({
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="grid grid-cols-2 gap-2 mt-2">
+                      {/* Action Buttons with Baseline Aligned Icons */}
+                      <div className="grid grid-cols-2 gap-2.5 mt-2">
                         <button
                           onClick={() => handleEditProduct(p)}
-                          className="w-full py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/15 text-white font-body text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5"
+                          className="w-full py-2.5 px-3 rounded-xl border border-white/15 bg-white/10 hover:bg-white/20 text-white font-body text-xs font-bold tracking-wider uppercase transition-all inline-flex items-center justify-center gap-1.5 leading-none cursor-pointer"
                         >
-                          <span>✏️ Edit</span>
+                          <span className="text-sm leading-none">✏️</span>
+                          <span className="leading-none">Edit</span>
                         </button>
                         <button
                           onClick={() => handleProductDelete(p.id)}
-                          className="w-full py-2 rounded-xl border border-red-500/30 bg-red-950/20 hover:bg-red-600 text-red-400 hover:text-white font-body text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5"
+                          className="w-full py-2.5 px-3 rounded-xl border border-red-500/40 bg-red-950/30 hover:bg-red-600 text-red-400 hover:text-white font-body text-xs font-bold tracking-wider uppercase transition-all inline-flex items-center justify-center gap-1.5 leading-none cursor-pointer"
                         >
-                          <span>🗑️ Delete</span>
+                          <span className="text-sm leading-none">🗑️</span>
+                          <span className="leading-none">Delete</span>
                         </button>
                       </div>
                     </div>
