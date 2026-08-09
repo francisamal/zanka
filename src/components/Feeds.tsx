@@ -136,7 +136,7 @@ function StarRating({ rating, interactive = false, onRate }: { rating: number; i
 function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="feed-card w-full h-full break-inside-avoid mb-6 md:mb-8 group relative overflow-hidden p-6 md:p-8 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(229,33,43,0.15)] border border-[rgba(229,33,43,0.4)] hover:border-[var(--red)] rounded-2xl"
+      className="feed-card w-full h-full break-inside-avoid mb-6 md:mb-8 group relative overflow-hidden p-[2rem] flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(229,33,43,0.15)] border border-[rgba(229,33,43,0.4)] hover:border-[var(--red)] rounded-2xl"
       style={{
         background: 'linear-gradient(145deg, rgba(229,33,43,0.03), rgba(255,255,255,0.01))',
         backdropFilter: 'blur(10px)',
@@ -208,7 +208,7 @@ function ReviewCard({ review }: { review: Review }) {
 function PostCard({ post }: { post: CommunityPost }) {
   return (
     <div
-      className="feed-card w-full h-full break-inside-avoid mb-6 group relative p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between overflow-hidden hover:shadow-[0_10px_40px_rgba(229,33,43,0.15)] border border-[rgba(229,33,43,0.4)] hover:border-[var(--red)] rounded-2xl"
+      className="feed-card w-full h-full break-inside-avoid mb-6 group relative p-[2rem] transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between overflow-hidden hover:shadow-[0_10px_40px_rgba(229,33,43,0.15)] border border-[rgba(229,33,43,0.4)] hover:border-[var(--red)] rounded-2xl"
       style={{
         background: 'linear-gradient(145deg, rgba(229,33,43,0.03), rgba(255,255,255,0.01))',
         backdropFilter: 'blur(10px)',
@@ -447,7 +447,7 @@ export default function Feeds() {
         id="feeds"
         style={{
           paddingTop: '3rem',
-          paddingBottom: '3rem',
+          paddingBottom: '4rem',
           paddingLeft: 'clamp(1.5rem, 3vw, 6rem)',
           paddingRight: 'clamp(1.5rem, 3vw, 6rem)',
         }}
@@ -532,7 +532,7 @@ export default function Feeds() {
                   <div>
                     <div
                       className="flex gap-3 md:gap-4 w-full overflow-x-auto snap-x snap-mandatory items-start"
-                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent', padding: '0.75rem 0.25rem 1.5rem 0.25rem' }}
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent', padding: '0.5rem 0.25rem 1rem 0.25rem' }}
                     >
                       {reviewsWithoutImage.map((review) => (
                         <div key={review.id} className="w-[85vw] sm:w-[280px] md:w-[320px] shrink-0 snap-start flex">
@@ -551,7 +551,7 @@ export default function Feeds() {
                     </div>
                     <div
                       className="flex gap-3 md:gap-4 w-full overflow-x-auto snap-x snap-mandatory items-start"
-                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent', padding: '0.75rem 0.25rem 1.5rem 0.25rem' }}
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent', padding: '0.5rem 0.25rem 1rem 0.25rem' }}
                     >
                       {reviewsWithImage.map((review) => (
                         <div key={review.id} className="w-[85vw] sm:w-[280px] md:w-[320px] shrink-0 snap-start flex">

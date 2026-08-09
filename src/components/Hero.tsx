@@ -255,7 +255,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative w-full min-h-screen lg:h-screen flex items-center justify-center py-20 pb-36 lg:py-0 overflow-visible lg:overflow-hidden">
+    <section className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
       <div
@@ -263,10 +263,10 @@ export default function Hero() {
         style={{ background: 'radial-gradient(ellipse at center, rgba(229,33,43,0.06) 0%, rgba(8,8,8,0.7) 55%, rgba(8,8,8,0.96) 100%)' }}
       />
 
-      <div className="relative z-10 w-full px-6 md:px-10 lg:px-16">
-
+      <div className="relative z-10 w-full px-6 md:px-10 lg:px-16 flex flex-col justify-center h-full pt-16 pb-24 lg:py-0">
+        
         {/* Main Split: 60% Logo Left / 40% Content Right */}
-        <div className="flex flex-col lg:flex-row items-center lg:items-center gap-6 lg:gap-0 w-full max-w-[1400px] mx-auto">
+        <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-0 w-full max-w-[1400px] mx-auto">
 
           {/* LEFT — Logo (60%) */}
           <div
@@ -276,7 +276,7 @@ export default function Hero() {
           >
             <div
               style={{
-                width: 'clamp(220px, 48vw, 720px)',
+                width: 'clamp(180px, 45vw, 720px)',
                 filter: 'drop-shadow(0 0 90px rgba(229,33,43,0.3)) drop-shadow(0 4px 50px rgba(0,0,0,0.5))',
               }}
             >
@@ -289,10 +289,10 @@ export default function Hero() {
           </div>
 
           {/* RIGHT — Content (40%) */}
-          <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left">
+          <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left mt-2 lg:mt-0">
 
             {/* Red accent line + label */}
-            <div className="flex items-center gap-3 mb-4" style={{ opacity: 0 }} ref={subRef}>
+            <div className="flex items-center gap-2 mb-3" style={{ opacity: 0 }} ref={subRef}>
               <div className="hidden lg:block w-8 h-[2px]" style={{ background: 'var(--red)' }} />
               <p
                 className="font-body text-[10px] md:text-xs tracking-[0.4em] uppercase font-semibold"
@@ -305,37 +305,35 @@ export default function Hero() {
             {/* Heading */}
             <h1
               ref={headingRef}
-              className="font-display text-white tracking-wider leading-none mb-4"
-              style={{ fontSize: 'clamp(1.6rem, 3.2vw, 3rem)', opacity: 0 }}
+              className="font-display text-white tracking-wider leading-[1.1] mb-3"
+              style={{ fontSize: 'clamp(1.4rem, 5vw, 3rem)', opacity: 0 }}
             >
               HANDPICKED<br />THRIFTED DRESSES
             </h1>
 
             {/* Description */}
-            <div ref={descRef} className="space-y-2.5 mb-5">
+            <div ref={descRef} className="space-y-2 mb-4">
               <p
-                className="font-body text-white/65 text-[13px] md:text-sm font-light leading-[1.7]"
+                className="font-body text-white/65 text-[12px] md:text-sm font-light leading-[1.6] max-w-sm"
                 style={{ opacity: 0 }}
               >
                 Discover handpicked thrifted dresses from different brands.
-                Every piece is carefully selected to give you the best style
-                and quality possible at this price.
+                Every piece is carefully selected for the best style and quality.
               </p>
               <p
-                className="font-body text-white/35 text-[11px] md:text-xs font-light leading-[1.7]"
+                className="font-body text-white/35 text-[10px] md:text-xs font-light leading-[1.6] max-w-sm"
                 style={{ opacity: 0 }}
               >
-                Since these are thrifted / pre-loved items, some dresses may have
-                minor flaws. Any noticeable flaws will be mentioned before purchase.
+                Minor flaws may exist on pre-loved items and will be mentioned.
               </p>
             </div>
 
             {/* Value Proposition Pills */}
-            <div ref={propsRef} className="flex flex-wrap justify-center lg:justify-start gap-2 mb-6">
+            <div ref={propsRef} className="flex flex-wrap justify-center lg:justify-start gap-2 mb-4">
               {VALUE_PROPS.map((prop) => (
                 <div
                   key={prop.text}
-                  className="hero-pill font-body text-[9px] md:text-[10px] tracking-[0.12em] uppercase px-3.5 py-1.5 font-medium flex items-center gap-1.5"
+                  className="hero-pill font-body text-[9px] md:text-[10px] tracking-[0.1em] uppercase px-3 py-1.5 font-medium flex items-center gap-1.5"
                   style={{
                     opacity: 0,
                     background: 'rgba(229, 33, 43, 0.06)',
@@ -350,14 +348,13 @@ export default function Hero() {
               ))}
             </div>
 
-
             {/* Disclaimer */}
             <p
               ref={disclaimerRef}
-              className="font-body text-white/18 text-[9px] tracking-[0.12em] uppercase font-light leading-relaxed max-w-xs"
+              className="font-body text-white/20 text-[9px] tracking-[0.1em] uppercase font-light leading-relaxed hidden sm:block"
               style={{ opacity: 0 }}
             >
-              Pre-loved items — we strive to bring you the best quality & value
+              Pre-loved items — we strive to bring you the best quality
             </p>
           </div>
         </div>
@@ -387,23 +384,23 @@ export default function Hero() {
             ))}
           </div>
         </div>
-      </div>
 
-      <div ref={ctaRef} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20">
-        <a
-          href="#shop"
-          className="relative inline-flex items-center justify-center font-display text-xs md:text-sm tracking-widest uppercase text-white bg-[var(--red)] rounded-md overflow-hidden group transition-all duration-500 hover:shadow-[0_10px_40px_rgba(229,33,43,0.6)] cursor-pointer"
-          style={{ padding: '0.5rem 1.25rem', whiteSpace: 'nowrap' }}
-        >
-          <span className="relative z-10">
-            SHOP NOW
-          </span>
-          <div className="absolute inset-0 bg-white/20 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
-        </a>
-        <div className="animate-bounce-arrow">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 4v12M5 11l5 5 5-5" stroke="var(--red)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+        <div ref={ctaRef} className="relative mt-8 lg:absolute lg:mt-0 lg:bottom-10 lg:left-1/2 lg:-translate-x-1/2 flex flex-col items-center gap-4 z-20 w-full lg:w-auto">
+          <a
+            href="#shop"
+            className="relative inline-flex items-center justify-center font-display text-xs md:text-sm tracking-widest uppercase text-white bg-[var(--red)] rounded-md overflow-hidden group transition-all duration-500 hover:shadow-[0_10px_40px_rgba(229,33,43,0.6)] cursor-pointer"
+            style={{ padding: '0.5rem 1.25rem', whiteSpace: 'nowrap' }}
+          >
+            <span className="relative z-10">
+              SHOP NOW
+            </span>
+            <div className="absolute inset-0 bg-white/20 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
+          </a>
+          <div className="animate-bounce-arrow hidden lg:block">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 4v12M5 11l5 5 5-5" stroke="var(--red)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
         </div>
       </div>
     </section>
