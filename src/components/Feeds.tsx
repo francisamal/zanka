@@ -136,13 +136,11 @@ function StarRating({ rating, interactive = false, onRate }: { rating: number; i
 function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="feed-card w-full h-full break-inside-avoid mb-6 md:mb-8 group relative overflow-hidden p-6 md:p-8 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1"
+      className="feed-card w-full h-full break-inside-avoid mb-6 md:mb-8 group relative overflow-hidden p-6 md:p-8 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(229,33,43,0.15)] border border-[rgba(229,33,43,0.4)] hover:border-[var(--red)] rounded-2xl"
       style={{
-        background: 'linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))',
-        border: '1px solid rgba(255,255,255,0.05)',
-        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.3)',
-        borderRadius: '20px',
+        background: 'linear-gradient(145deg, rgba(229,33,43,0.03), rgba(255,255,255,0.01))',
         backdropFilter: 'blur(10px)',
+        padding: '2rem',
       }}
     >
       <div
@@ -210,13 +208,11 @@ function ReviewCard({ review }: { review: Review }) {
 function PostCard({ post }: { post: CommunityPost }) {
   return (
     <div
-      className="feed-card w-full h-full break-inside-avoid mb-6 group relative p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
+      className="feed-card w-full h-full break-inside-avoid mb-6 group relative p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between overflow-hidden hover:shadow-[0_10px_40px_rgba(229,33,43,0.15)] border border-[rgba(229,33,43,0.4)] hover:border-[var(--red)] rounded-2xl"
       style={{
-        background: 'linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))',
-        border: '1px solid rgba(255,255,255,0.05)',
-        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.3)',
-        borderRadius: '16px',
+        background: 'linear-gradient(145deg, rgba(229,33,43,0.03), rgba(255,255,255,0.01))',
         backdropFilter: 'blur(10px)',
+        padding: '2rem',
       }}
     >
       <div
@@ -282,9 +278,10 @@ function SkeletonCard() {
     <div
       className="feed-card animate-pulse p-6 md:p-8 rounded-2xl border"
       style={{
-        background: 'rgba(255,255,255,0.02)',
-        borderColor: 'rgba(255,255,255,0.05)',
+        background: 'rgba(229,33,43,0.02)',
+        borderColor: 'rgba(229,33,43,0.2)',
         height: '240px',
+        padding: '2rem',
       }}
     >
       <div className="flex items-center gap-3 mb-4">
@@ -473,7 +470,8 @@ export default function Feeds() {
             <div className="flex gap-2">
               <button
                 onClick={() => openModal('review')}
-                className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1"
+                className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-xs md:text-sm tracking-[0.15em] uppercase rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1"
+                style={{ padding: '0.5rem 1.25rem', whiteSpace: 'nowrap' }}
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <span className="group-hover:rotate-12 transition-transform duration-300">★</span> Write a Review
@@ -482,7 +480,8 @@ export default function Feeds() {
               </button>
               <button
                 onClick={() => openModal('post')}
-                className="relative inline-flex items-center justify-center gap-2 bg-transparent text-white/70 font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md border-2 border-white/20 overflow-hidden group transition-all duration-300 hover:border-white hover:text-white hover:-translate-y-1"
+                className="relative inline-flex items-center justify-center gap-2 bg-transparent text-white/70 font-display text-xs md:text-sm tracking-[0.15em] uppercase rounded-md border-2 border-white/20 overflow-hidden group transition-all duration-300 hover:border-white hover:text-white hover:-translate-y-1"
+                style={{ padding: '0.5rem 1.25rem', whiteSpace: 'nowrap' }}
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <span className="group-hover:rotate-90 transition-transform duration-300">✦</span> Post Your Look
@@ -492,7 +491,7 @@ export default function Feeds() {
           </div>
 
           {/* Premium Tabs */}
-          <div className="mt-12 flex gap-8 md:gap-14 border-b border-white/10 pb-4 w-full md:w-auto overflow-x-auto no-scrollbar">
+          <div className="mt-12 flex gap-8 md:gap-14 border-b border-white/10 pb-4 w-full md:w-auto overflow-x-auto no-scrollbar" style={{ marginBottom: '1.5rem' }}>
             <button
               onClick={() => setActiveTab('reviews')}
               className={`font-display text-2xl md:text-3xl tracking-widest uppercase transition-all duration-500 relative flex items-center gap-3 shrink-0 ${
@@ -532,8 +531,8 @@ export default function Feeds() {
                 {reviewsWithoutImage.length > 0 && (
                   <div>
                     <div
-                      className="flex gap-3 md:gap-4 w-full overflow-x-auto pb-6 snap-x snap-mandatory items-start"
-                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent' }}
+                      className="flex gap-3 md:gap-4 w-full overflow-x-auto snap-x snap-mandatory items-start"
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent', padding: '0.75rem 0.25rem 1.5rem 0.25rem' }}
                     >
                       {reviewsWithoutImage.map((review) => (
                         <div key={review.id} className="w-[85vw] sm:w-[280px] md:w-[320px] shrink-0 snap-start flex">
@@ -551,8 +550,8 @@ export default function Feeds() {
                       <div className="h-px flex-1 bg-white/10" />
                     </div>
                     <div
-                      className="flex gap-3 md:gap-4 w-full overflow-x-auto pb-6 snap-x snap-mandatory items-start"
-                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent' }}
+                      className="flex gap-3 md:gap-4 w-full overflow-x-auto snap-x snap-mandatory items-start"
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent', padding: '0.75rem 0.25rem 1.5rem 0.25rem' }}
                     >
                       {reviewsWithImage.map((review) => (
                         <div key={review.id} className="w-[85vw] sm:w-[280px] md:w-[320px] shrink-0 snap-start flex">
@@ -569,7 +568,8 @@ export default function Feeds() {
                 <p className="font-body text-sm text-white/40 font-light mb-4">No reviews yet. Be the first to share your experience!</p>
                 <button
                   onClick={() => openModal('review')}
-                  className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1 mx-auto"
+                  className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-xs md:text-sm tracking-[0.15em] uppercase rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1 mx-auto"
+                  style={{ padding: '0.5rem 1.25rem', whiteSpace: 'nowrap' }}
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     <span className="group-hover:rotate-12 transition-transform duration-300">★</span> Write a Review
@@ -588,7 +588,8 @@ export default function Feeds() {
                   <p className="font-body text-sm text-white/40 font-light mb-4">No community posts yet. Share your outfit look!</p>
                   <button
                     onClick={() => openModal('post')}
-                    className="relative inline-flex items-center justify-center gap-2 bg-transparent text-white/70 font-display text-sm md:text-base tracking-[0.15em] uppercase px-8 py-4 rounded-md border-2 border-white/20 overflow-hidden group transition-all duration-300 hover:border-white hover:text-white hover:-translate-y-1 mx-auto"
+                    className="relative inline-flex items-center justify-center gap-2 bg-transparent text-white/70 font-display text-xs md:text-sm tracking-[0.15em] uppercase rounded-md border-2 border-white/20 overflow-hidden group transition-all duration-300 hover:border-white hover:text-white hover:-translate-y-1 mx-auto"
+                    style={{ padding: '0.5rem 1.25rem', whiteSpace: 'nowrap' }}
                   >
                     <span className="relative z-10 flex items-center gap-2">
                       <span className="group-hover:rotate-90 transition-transform duration-300">✦</span> Post Your Look
@@ -600,28 +601,6 @@ export default function Feeds() {
           )}
         </div>
 
-        {/* Average Rating Bar (for reviews tab) */}
-        {activeTab === 'reviews' && reviews.length > 0 && (
-          <div
-            className="mt-10 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 py-5 px-8 mx-auto w-fit"
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.05)',
-              borderRadius: '100px',
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <span className="font-display text-3xl text-white tracking-wider">
-                {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)}
-              </span>
-              <StarRating rating={Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length)} />
-            </div>
-            <div className="h-6 w-px hidden md:block" style={{ background: 'rgba(255,255,255,0.1)' }} />
-            <p className="font-body text-xs text-white/40 tracking-wider uppercase font-light">
-              Based on {reviews.length} reviews
-            </p>
-          </div>
-        )}
 
         {/* Instagram Link */}
         <div className="mt-10 flex justify-center">

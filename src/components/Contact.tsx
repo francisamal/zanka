@@ -29,7 +29,7 @@ export default function Contact() {
   }, [])
 
   return (
-    <section ref={sectionRef} id="contact" className="py-28 px-5 md:px-10 relative overflow-hidden">
+    <section ref={sectionRef} id="contact" className="px-5 md:px-10 relative overflow-hidden" style={{ paddingTop: '3rem', paddingBottom: '7rem' }}>
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(229,33,43,0.07) 0%, transparent 65%)' }} />
 
       <div className="max-w-2xl mx-auto text-center relative z-10">

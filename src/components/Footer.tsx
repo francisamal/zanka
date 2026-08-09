@@ -75,11 +75,7 @@ export default function Footer() {
             </h2>
           </div>
           <div className="footer-reveal h-[2px] w-16 mx-auto mb-6" style={{ background: 'var(--red)' }} />
-          <div className="footer-reveal">
-            <p className="font-body text-white/50 font-light leading-relaxed max-w-xl mx-auto mb-8 text-sm md:text-base">
-              DM us on Instagram, drop an email, or check out our latest drops. We are constantly designing beyond the usual.
-            </p>
-          </div>
+
           <div className="footer-reveal flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
               href="https://www.instagram.com/wardrobeofzanka"
@@ -113,7 +109,7 @@ export default function Footer() {
         <hr className="border-t mb-12" style={{ borderColor: 'rgba(255, 255, 255, 0.05)' }} />
 
         {/* Lower Part: Directory Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-12 mb-12">
           {/* Brand Info */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <span
@@ -131,24 +127,6 @@ export default function Footer() {
             <p className="font-body text-xs text-white/40 tracking-wider max-w-xs font-light leading-relaxed">
               Pop culture socks and statement fashion designs. Unapologetic styling, premium fabrics.
             </p>
-          </div>
-
-          {/* Quick Links */}
-          <div className="flex flex-col items-center text-center">
-            <h4 className="font-body text-[10px] tracking-[0.3em] uppercase text-white/30 font-semibold mb-5">
-              Explore
-            </h4>
-            <div className="flex flex-col gap-3">
-              {[{ label: 'Shop', href: '#socks' }, { label: 'Feeds', href: '#feeds' }, { label: 'About', href: '#about' }].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="font-body text-xs tracking-[0.25em] uppercase text-white/50 hover:text-white transition-colors duration-300 font-medium"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Connect Info */}
@@ -183,9 +161,14 @@ export default function Footer() {
           <p className="font-body text-[10px] text-white/20 tracking-widest font-light uppercase">
             © {new Date().getFullYear()} ZANKA. All rights reserved.
           </p>
-          <p className="font-body text-[10px] text-white/20 tracking-[0.3em] uppercase font-light">
-            Beyond The Usual.
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="font-body text-[10px] text-white/20 tracking-[0.3em] uppercase font-light">
+              Beyond The Usual.
+            </p>
+            <span className="font-body text-[10px] tracking-widest" style={{ color: 'rgba(229, 33, 43, 0.5)' }}>
+              {process.env.NEXT_PUBLIC_APP_VERSION || 'v1.0.0-dev'}
+            </span>
+          </div>
         </div>
       </div>
     </footer>
