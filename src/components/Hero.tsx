@@ -272,19 +272,19 @@ export default function Hero() {
           {/* 20% SPACE FOR LOGO on Mobile / 54% Left Column on Desktop */}
           <div
             ref={zankaRef}
-            className="h-[29%] lg:h-auto w-full lg:w-[54%] flex items-center justify-center shrink-0 select-none px-1 lg:px-0"
+            className="h-[29%] lg:h-auto w-full lg:w-[54%] flex items-center justify-center shrink-0 select-none px-0 overflow-visible"
             style={{ opacity: 0 }}
           >
             <div
-              className="w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[420px] lg:max-w-[700px] h-full flex items-center justify-center"
+              className="w-full max-w-[500px] xs:max-w-[560px] sm:max-w-[640px] lg:max-w-[700px] h-full flex items-center justify-center overflow-visible"
               style={{
-                filter: 'drop-shadow(0 0 70px rgba(229,33,43,0.38)) drop-shadow(0 8px 35px rgba(0,0,0,0.85))',
+                filter: 'drop-shadow(0 0 95px rgba(229,33,43,0.5)) drop-shadow(0 12px 45px rgba(0,0,0,0.95))',
               }}
             >
               <img
                 src="/logo/zanka-logo-withoutbackground.png"
                 alt="ZANKA"
-                className="max-h-full w-auto max-w-full lg:w-full object-contain mx-auto transition-transform duration-300"
+                className="max-h-[180%] w-auto max-w-[115vw] lg:max-w-full lg:w-full object-contain mx-auto transform scale-[2.4] xs:scale-[2.65] sm:scale-[2.9] lg:scale-100 transition-transform duration-300"
               />
             </div>
           </div>
