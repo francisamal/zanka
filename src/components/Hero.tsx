@@ -258,159 +258,149 @@ export default function Hero() {
 
       <div
         className="absolute inset-0"
-        style={{ background: 'radial-gradient(ellipse at center, rgba(229,33,43,0.06) 0%, rgba(8,8,8,0.7) 55%, rgba(8,8,8,0.96) 100%)' }}
+        style={{ background: 'radial-gradient(ellipse at center, rgba(229,33,43,0.08) 0%, rgba(8,8,8,0.72) 50%, rgba(8,8,8,0.98) 100%)' }}
       />
 
-      <div className="relative z-10 w-full px-4 sm:px-6 md:px-10 lg:px-16 flex flex-col justify-between lg:justify-center h-full pt-10 sm:pt-14 pb-4 lg:py-0">
+      <div className="relative z-10 w-full h-full flex flex-col justify-between items-center px-4 sm:px-6 md:px-10 lg:px-16 max-w-[1400px] mx-auto lg:justify-center">
 
-        {/* Top/Middle Group: Logo + Content */}
-        <div className="flex flex-col lg:flex-row items-center lg:items-center gap-1 lg:gap-0 w-full max-w-[1400px] mx-auto">
+        {/* 10% TOP BLANK SPACE on Mobile (Clears floating nav) */}
+        <div className="h-[10%] lg:hidden w-full shrink-0" />
 
-          {/* LEFT — Logo (60%) */}
+        {/* DESKTOP + MOBILE COMBINED ROW (70% total on mobile: 20% Logo + 50% Content) */}
+        <div className="flex flex-col lg:flex-row items-center justify-between w-full lg:gap-12 h-[70%] lg:h-auto shrink-0">
+
+          {/* 20% SPACE FOR LOGO on Mobile / 54% Left Column on Desktop */}
           <div
             ref={zankaRef}
-            className="select-none flex items-center justify-center lg:justify-center w-full lg:w-[60%] lg:flex-shrink-0 -mt-2 sm:mt-0"
+            className="h-[29%] lg:h-auto w-full lg:w-[54%] flex items-center justify-center shrink-0 select-none px-1 lg:px-0"
             style={{ opacity: 0 }}
           >
             <div
+              className="w-full max-w-[320px] xs:max-w-[360px] sm:max-w-[420px] lg:max-w-[700px] h-full flex items-center justify-center"
               style={{
-                width: isMobile ? 'clamp(310px, 88vw, 450px)' : 'clamp(240px, 75vw, 720px)',
-                filter: 'drop-shadow(0 0 90px rgba(229,33,43,0.3)) drop-shadow(0 4px 50px rgba(0,0,0,0.5))',
+                filter: 'drop-shadow(0 0 70px rgba(229,33,43,0.38)) drop-shadow(0 8px 35px rgba(0,0,0,0.85))',
               }}
             >
               <img
                 src="/logo/zanka-logo-withoutbackground.png"
                 alt="ZANKA"
-                style={{ width: '100%', height: 'auto' }}
+                className="max-h-full w-auto max-w-full lg:w-full object-contain mx-auto transition-transform duration-300"
               />
             </div>
           </div>
 
-          {/* RIGHT — Content (40%) */}
+          {/* 50% SPACE FOR CONTENT on Mobile / 46% Right Column on Desktop */}
           <div
-            className="w-full lg:w-[40%] flex flex-col items-center lg:items-start text-center lg:text-left -mt-16 sm:-mt-16 lg:mt-0"
+            className="h-[71%] lg:h-auto w-full lg:w-[46%] flex flex-col items-center lg:items-start justify-center text-center lg:text-left shrink-0 px-1 lg:px-0 gap-2.5 xs:gap-3.5 lg:gap-4"
           >
 
-            {/* Red accent line + Eyebrow badge */}
-            <div className="flex items-center gap-2 mb-1 lg:mb-[6px]" style={{ opacity: 0 }} ref={subRef}>
-              <div className="hidden lg:block w-8 h-[2px]" style={{ background: 'var(--red)' }} />
-              <p
-                className="font-body text-xs font-bold tracking-[0.12em] uppercase"
-                style={{ color: 'var(--red)', letterSpacing: '0.12em', marginBottom: isMobile ? '2px' : '6px' }}
-              >
-                THRIFTED FASHION
-              </p>
+            {/* Eyebrow Badge */}
+            <div className="flex items-center gap-1.5 lg:gap-2" style={{ opacity: 0 }} ref={subRef}>
+              <div className="hidden lg:block w-10 h-[2px]" style={{ background: 'var(--red)' }} />
+              <div className="flex items-center gap-2 px-4 py-1 lg:px-4 lg:py-1 rounded-full bg-[var(--red)]/15 border border-[var(--red)]/35 shadow-[0_0_15px_rgba(229,33,43,0.18)]">
+                <span className="w-2 h-2 rounded-full bg-[var(--red)] animate-pulse shadow-[0_0_8px_var(--red)]" />
+                <p className="font-body text-xs lg:text-xs font-bold tracking-[0.2em] uppercase text-[var(--red)]">
+                  THRIFTED FASHION
+                </p>
+              </div>
             </div>
 
-            {/* Heading */}
+            {/* Main Heading */}
             <h1
               ref={headingRef}
-              className="font-display text-white tracking-wider mb-1.5 lg:mb-2 font-bold"
-              style={{ fontSize: isMobile ? 'clamp(1.45rem, 5.8vw, 1.95rem)' : 'clamp(1.8rem, 6vw, 2.5rem)', lineHeight: 1.15, opacity: 0 }}
+              className="font-display text-white tracking-wide font-extrabold text-[1.65rem] xs:text-3xl sm:text-4xl lg:text-4xl xl:text-5xl 2xl:text-6xl leading-[1.12]"
+              style={{ opacity: 0 }}
             >
-              HANDPICKED<br className="hidden sm:inline" /> THRIFTED DRESSES
+              HANDPICKED<br className="hidden lg:inline" /> THRIFTED DRESSES
             </h1>
 
-            {/* Description Subtext */}
-            <div ref={descRef} className="space-y-1 lg:space-y-1.5" style={{ margin: isMobile ? '6px 0 10px' : '12px 0 16px' }}>
+            {/* Description */}
+            <div ref={descRef} className="max-w-[340px] xs:max-w-sm sm:max-w-md lg:max-w-lg">
               <p
-                className="font-body text-white/85 text-xs sm:text-sm font-normal leading-relaxed max-w-xs sm:max-w-sm"
+                className="font-body text-white/95 text-xs xs:text-sm lg:text-base xl:text-lg font-normal leading-relaxed"
                 style={{ opacity: 0 }}
               >
                 Discover handpicked thrifted dresses from different brands.
                 Every piece is carefully selected for the best style and quality.
               </p>
-              <p
-                className="font-body text-white/40 text-[10px] md:text-xs font-light leading-normal max-w-sm hidden sm:block"
-                style={{ opacity: 0 }}
-              >
-                Minor flaws may exist on pre-loved items and will be mentioned.
-              </p>
             </div>
 
-            {/* Value Proposition Pills & Tags */}
-            <div ref={propsRef} className="flex flex-wrap justify-center lg:justify-start items-center gap-1.5 lg:gap-2 mb-2 lg:mb-5 max-w-sm">
+            {/* Value Proposition Pills */}
+            <div
+              ref={propsRef}
+              className="flex flex-wrap justify-center lg:justify-start items-center gap-2 lg:gap-2.5 pt-0.5 lg:pt-1 max-w-[360px] xs:max-w-md lg:max-w-none"
+            >
               {VALUE_PROPS.map((prop) => (
                 <div
                   key={prop.text}
-                  className="hero-pill font-body tracking-wider uppercase px-2.5 py-1 lg:px-3 lg:py-1 font-medium flex items-center gap-1.5 leading-normal"
+                  className="font-body tracking-wider uppercase px-3.5 py-1.5 lg:px-4 lg:py-2 font-semibold flex items-center gap-2 leading-normal rounded-full transition-all duration-300 hover:border-[var(--red)]/60 hover:bg-[var(--red)]/15 text-xs lg:text-xs xl:text-sm"
                   style={{
                     opacity: 0,
-                    background: 'rgba(229, 33, 43, 0.08)',
-                    border: '1px solid rgba(229, 33, 43, 0.25)',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: '100px',
-                    fontSize: isMobile ? '0.72rem' : '0.75rem',
+                    background: 'rgba(229, 33, 43, 0.12)',
+                    border: '1px solid rgba(229, 33, 43, 0.35)',
+                    color: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(8px)',
                   }}
                 >
-                  <span style={{ color: 'var(--red)', fontSize: '0.9em' }}>{prop.icon}</span>
+                  <span style={{ color: 'var(--red)', fontSize: '1em' }}>{prop.icon}</span>
                   <span>{prop.text}</span>
                 </div>
               ))}
             </div>
 
-            {/* Disclaimer */}
+            {/* Quality Note */}
             <p
               ref={disclaimerRef}
-              className="font-body text-white/35 text-[9px] lg:text-[9px] tracking-[0.1em] uppercase font-light leading-relaxed"
+              className="font-body text-white/75 text-xs lg:text-xs tracking-[0.06em] lg:tracking-[0.08em] uppercase font-medium leading-normal lg:leading-relaxed pt-0.5"
               style={{ opacity: 0 }}
             >
-              Pre-loved items — we strive to bring you the best quality
+              ✦ Pre-loved items — curated with quality
             </p>
           </div>
         </div>
 
-        {/* Bottom Section: Tagline + Shop Now (Separated at the bottom) */}
-        <div className="w-full flex flex-col items-center gap-2 lg:gap-0 mt-auto lg:mt-0">
-          {/* Bottom Tagline — Full Width Centered */}
-          <div className="w-full max-w-[1400px] mx-auto lg:mt-8">
-            <div
-              ref={lettersRef}
-              className="overflow-hidden flex flex-wrap justify-center"
-              style={{ perspective: '600px' }}
-              aria-label={TAGLINE}
-            >
-              {TAGLINE.split('').map((char, i) => (
-                <span
-                  key={i}
-                  className="letter font-display text-white/90 leading-none"
-                  style={{
-                    display: 'inline-block',
-                    fontSize: isMobile ? 'clamp(0.7rem, 2.8vw, 0.9rem)' : 'clamp(1rem, 2.8vw, 2.4rem)',
-                    letterSpacing: isMobile ? '0.18em' : '0.25em',
-                    opacity: 0,
-                    marginRight: char === ' ' ? '0.6em' : undefined,
-                  }}
-                >
-                  {char === ' ' ? ' ' : char}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Primary CTA Placement (Shop Now Button) */}
-          <div ref={ctaRef} className="relative mt-2 lg:absolute lg:mt-0 lg:bottom-8 lg:left-1/2 lg:-translate-x-1/2 flex flex-col items-center gap-2 lg:gap-3 z-20 w-full lg:w-auto">
-            <a
-              href="#socks"
-              className="relative inline-flex items-center justify-center font-display text-xs md:text-sm tracking-widest uppercase text-white bg-[var(--red)] rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_40px_rgba(229,33,43,0.6)] cursor-pointer active:scale-95"
-              style={{
-                width: '80%',
-                maxWidth: isMobile ? '240px' : '280px',
-                minHeight: isMobile ? '45px' : '48px',
-                padding: isMobile ? '0.7rem 1.4rem' : '0.75rem 1.5rem',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <span className="relative z-10 font-bold tracking-wider">SHOP NOW</span>
-              <div className="absolute inset-0 bg-white/20 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
-            </a>
-            <div className="animate-bounce-arrow hidden lg:block">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 4v12M5 11l5 5 5-5" stroke="var(--red)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {/* 10% BUTTON on Mobile / Desktop CTA Container */}
+        <div ref={ctaRef} className="h-[10%] lg:h-auto w-full flex items-center justify-center shrink-0 lg:mt-8 z-20">
+          <a
+            href="#socks"
+            className="relative inline-flex items-center justify-center font-display text-sm lg:text-sm tracking-widest uppercase text-white bg-[var(--red)] rounded-full overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_35px_rgba(229,33,43,0.65)] cursor-pointer active:scale-95 shadow-[0_6px_25px_rgba(229,33,43,0.45)] w-[85%] max-w-[280px] lg:w-auto min-h-[48px] xs:min-h-[52px] px-8 py-3 lg:px-8 lg:py-3.5"
+          >
+            <span className="relative z-10 font-extrabold tracking-wider flex items-center gap-2">
+              SHOP NOW
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="group-hover:translate-x-1 transition-transform duration-300">
+                <path d="M4 10h12m-5-5l5 5-5 5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </div>
+            </span>
+            <div className="absolute inset-0 bg-white/20 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+          </a>
+        </div>
+
+        {/* 10% BOTTOM BLANK SPACE on Mobile (Holds Tagline) / Desktop Tagline */}
+        <div className="h-[10%] lg:h-auto w-full flex items-center justify-center shrink-0 pb-2 lg:pb-0 lg:order-first lg:mb-4">
+          <div
+            ref={lettersRef}
+            className="overflow-hidden flex flex-wrap justify-center"
+            style={{ perspective: '600px' }}
+            aria-label={TAGLINE}
+          >
+            {TAGLINE.split('').map((char, i) => (
+              <span
+                key={i}
+                className="letter font-display text-white/90 leading-none"
+                style={{
+                  display: 'inline-block',
+                  fontSize: 'clamp(0.82rem, 2.8vw, 1.05rem)',
+                  letterSpacing: '0.24em',
+                  opacity: 0,
+                  marginRight: char === ' ' ? '0.45em' : undefined,
+                }}
+              >
+                {char === ' ' ? ' ' : char}
+              </span>
+            ))}
           </div>
         </div>
+
       </div>
     </section>
   )
