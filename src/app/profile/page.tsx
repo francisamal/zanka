@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useCart } from '@/utils/CartContext'
 import Nav from '@/components/Nav'
 import Cursor from '@/components/Cursor'
@@ -246,12 +247,12 @@ export default function ProfilePage() {
             ) : orders.length === 0 ? (
               <div className="w-full bg-white/[0.02] border border-dashed border-white/10 rounded-3xl p-16 text-center">
                 <svg className="w-12 h-12 text-white/20 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                <p className="font-body text-white/50 tracking-widest uppercase text-xs">You haven't placed any orders yet.</p>
+                <p className="font-body text-white/50 tracking-widest uppercase text-xs">You haven&apos;t placed any orders yet.</p>
               </div>
             ) : (
               <div className="space-y-6 w-full">
                 {orders.map(order => (
-                  <a 
+                  <Link 
                     href={`/order/${order.id}`} 
                     key={order.id} 
                     className="block group bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-8 transition-all duration-300 hover:bg-white/[0.04] hover:border-white/30 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:-translate-y-1 cursor-pointer"
@@ -294,7 +295,7 @@ export default function ProfilePage() {
                         </span>
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}

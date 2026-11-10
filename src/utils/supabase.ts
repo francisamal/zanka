@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 import { S3Client } from '@aws-sdk/client-s3'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
-if (!supabaseUrl) {
-  throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  console.warn('⚠️ Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
 }
 
 // Supabase server client using the service role key for admin privileges

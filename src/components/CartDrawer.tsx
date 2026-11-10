@@ -302,7 +302,7 @@ export default function CartDrawer() {
               </div>
               <div className="space-y-2">
                 <h3 className="font-display text-xl tracking-wider text-white">CART IS EMPTY</h3>
-                <p className="font-body text-white/40 text-sm font-light">Looks like you haven't added anything yet.</p>
+                <p className="font-body text-white/40 text-sm font-light">Looks like you haven&apos;t added anything yet.</p>
               </div>
               <button
                 className="relative inline-flex items-center justify-center gap-2 bg-[var(--red)] text-white font-display text-base tracking-[0.15em] uppercase px-10 py-4 rounded-md overflow-hidden group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(229,33,43,0.5)] hover:-translate-y-1 mt-4"
